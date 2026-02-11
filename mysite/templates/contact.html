@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="page">
+    <h1>Contact Us</h1>
+    <p>Feel free to contact us for any queries.</p>
+
+    <form class="contact-form" method="POST" action="{% url 'saveenquiry' %}">
+         {% csrf_token %}
+        <input type="text" placeholder="Your Name" name="name" required>
+        <input type="email" placeholder="Your Email" name="email" required>
+        <textarea placeholder="Your Message" name="Message"></textarea>
+        <button type="submit">Send Message</button>
+    </form>
+    {% if success %}
+    <p style="color:green;">Message sent successfully</p>
+    {% endif %}
+    
+    <p><strong>Email:</strong> example@email.com </p>
+    <p><strong>Phone:</strong> +91 9876543210 </p>
+</section>
+
+{% endblock %}

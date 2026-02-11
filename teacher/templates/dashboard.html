@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>TEACHER</h2>
+        <ul>
+            <li class="active">Dashboard</li>
+            <li>Students</li>
+            <li>Attendance</li>
+            <li>Marks</li>
+            <li>Courses</li>
+            <li>Profile</li>
+            <li><a href="{% url 'teacher_logout' %}">Logout</a></li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+
+        <!-- TOP BAR -->
+        <div class="topbar">
+            <h1>Teacher Dashboard</h1>
+            <img src="{% static 'images/profile.png' %}" alt="Profile">
+        </div>
+
+        <!-- STAT CARDS -->
+        <div class="cards">
+            <div class="card blue">
+                <h3>Total Students</h3>
+                <p></p>
+            </div>
+
+            <div class="card yellow">
+                <h3>New Students</h3>
+                <p></p>
+            </div>
+
+            <div class="card purple">
+                <h3>Total Courses</h3>
+                <p></p>
+            </div>
+
+            <div class="card red">
+                <h3>Attendance %</h3>
+                <p></p>
+            </div>
+        </div>
+
+        <!-- CHART SECTION (STATIC FOR NOW) -->
+        <div class="charts">
+            <div class="chart-box">
+                <h3>Student Performance</h3>
+                <div class="fake-chart"></div>
+            </div>
+
+            <div class="chart-box">
+                <h3>Attendance Overview</h3>
+                <div class="fake-chart"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

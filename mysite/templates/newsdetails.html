@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="page">
+    <h1>{{newsdetails.news_title}}</h1>
+    <p>
+        {{newsdetails.news_des | safe}}
+       <!-- MyWebsite is a beginner-friendly platform created to practice and
+        understand basic web development concepts.-->
+    </p>
+
+    <h2>Our Vision</h2>
+    <p>
+        To make learning web development simple, practical and enjoyable
+        for students.
+    </p>
+
+    <h2>Technologies Used</h2>
+    <ul>
+        <li>HTML5</li>
+        <li>CSS3</li>
+        <li>Basic Web Design Principles</li>
+    </ul>
+</section>
+
+{% endblock %}

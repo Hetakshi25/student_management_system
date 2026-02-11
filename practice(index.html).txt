@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <title>{{title}}</title>
+        <style>
+            .main{
+                width:1000px;
+                background-color:skyblue;
+                color: white;
+                padding:20px;
+                font-size:30px;
+            }
+
+        </style>
+    </head>
+    <body>
+        {% for n in clist %}
+        <div> {{forloop.counter}}{{n}}</div>
+        {% endfor %}
+        <br>
+        <table border="1" cellpadding="10">
+            <tr>
+                <th>Name</th>
+                <th>Phone Number</th>
+            </tr>
+
+            {% for d in student_details %}
+            <tr>
+                <td>{{d.name}} </td>
+                <td>{{d.phone}} </td>
+            </tr>
+            {% endfor %}
+
+        </table>
+        {% if numbers|length > 0 %}
+        {% for n in numbers %}
+
+            {% if n > 20%}
+            <div>{{n}}</div>
+            {% endif %}
+        {% endfor %}
+        {% else %}
+         no data found
+        {% endif %}
+    </body>
+</html>
+
+
+
+
+
+
+  data={
+                'n1':n1,
+                'n2':n2,
+                'output':finalans
+            }
+            return HttpResponseRedirect('/about-us')

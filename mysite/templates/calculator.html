@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="page">
+    <h1>Calculator</h1>
+    <!--<p>Feel free to contact us for any queries.</p>-->
+    <form method="post" class="contact-form">
+        {% csrf_token %}
+        <label>value 1:</label>
+        <input type="text" name="num1">
+        <label>select operator</label>
+        <select name="opr" class="contact-form">
+            <option value="+">+</option>
+            <option value="-">-</option>
+            <option value="*">*</option>
+            <option value="/">/</option>
+        </select><br>
+        <label>value 2:</label>
+        <input type="text" name="num2">
+        <button type="submit">Calculator</button><br><br>
+        <label>Output:</label>
+        <input type="text" value="{{c}}" >
+    </form>
+
+</section>
+
+{% endblock %}
