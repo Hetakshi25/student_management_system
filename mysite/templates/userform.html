@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="page">
+    <h1>Userform</h1>
+    <!--<p>Feel free to contact us for any queries.</p>-->
+
+    
+        <form method="POST" class="contact-form" action="{% url 'submitform' %}">
+            {% csrf_token %}
+            {{form}}
+       <!-- <label for=""> value1 </label>
+        <input type="text" name="num1" value="{{n1}}">
+        <label for=""> value2 </label>
+        <input type="text" name="num2" value="{{n2}}">-->
+        <button type="submit">Save</button>
+        
+         Output 
+        <input type="text" value="{{output}}">
+        
+        <!--<input type="text" placeholder="Your Name" required>
+        <input type="email" placeholder="Your Email" required>
+        <textarea placeholder="Your Message"></textarea>
+        <button type="submit">Send Message</button>-->
+        </form>
+    
+
+    <p><strong>Email:</strong> example@email.com</p>
+    <p><strong>Phone:</strong> +91 9876543210</p>
+</section>
+
+{% endblock %}

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Student Management System
 
 A comprehensive school management platform built with Django. This system handles student and teacher records, attendance tracking, fee management, and academic results.
@@ -37,3 +38,6 @@ Visit `http://127.0.0.1:8000` to access the portal.
 
 ## Contact & Credits
 Developed as an institutional management solution.
+=======
+# student_management_system
+>>>>>>> ed74c8ec0121491a6105fc0595dbe42b047a5aa5

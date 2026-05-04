@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="page">
+    <h1>odd|even</h1>
+    
+    <form method="post" class="contact-form">
+        {% csrf_token %}
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            please enter the value
+        </div>
+        {% endif %}
+         <label>value 1:</label>
+        <input type="text" name="num1">
+        <button type="submit">Even|Odd</button><br><br>
+        <label>Output:</label>
+        <input type="text" value="{{c}}" >
+
+
+
+
+    </form>
+
+</section>
+
+{% endblock %}

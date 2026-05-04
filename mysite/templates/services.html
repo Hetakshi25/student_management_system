@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<section class="hero">
+    <h1>Welcome to My Website</h1>
+    <p>Learn Web Development Step by Step</p>
+</section>
+<form method="get">
+    <input type="text" name="servicename" value=""/>
+    <input type="submit" value="search"/>
+</form>
+
+{% for n in servicesdata %}
+
+<section class="i{{n.service_icon}}">
+    <img src="{% static 'img/flight2.jpg' %}">
+    <div>
+        <h2>{{n.service_title}}</h2>
+        <p>
+            {{n.service_des}}
+        </p>
+    </div>
+</section>
+{% empty %}
+no data found
+{% endfor %}
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="pagination">
+    {% if servicesdata.has_previous %}
+    <a href="#" class="disabled">Previous</a>
+    <a href="#">1</a>
+    {% endif %}
+    
+    <a href="#" class="active">2</a>
+    <a href="#">3</a>
+    <a href="#">Next</a>
+</div>
+
+
+
+{% endblock %}

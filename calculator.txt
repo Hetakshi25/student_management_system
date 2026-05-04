@@ -1,0 +1,46 @@
+from django.http import HttpResponse 
+from django.shortcuts import render
+
+def homepage(request):
+    data={
+        'title':'home page',
+          'bdata':'welcome to wscubetech',
+          'clist':['PHP','JAVA','DJango'],
+          'numbers':[10,20,30,40,50],
+          'student_details':[{'name':'pradeep','phone':9269698122},
+                             {'name':'testing','phone':9269698122}]
+            
+        }
+    return render(request,"index.html",data)
+
+def aboutus(request):
+    return HttpResponse("welcome to mysite")
+
+def courseDetails(request,courseid): #courseid j dynamic banavyu 6 a(urls.py ma)
+    return HttpResponse(courseid)
+
+def course(request):
+    return render(request,"userform.html")
+
+def calculator(request):
+    c=""
+    try:
+        if request.method=="POST":
+            n1=int(request.POST.get('num1'))
+            n2=int(request.POST.get('num2'))
+            opr=request.POST.get('opr')
+            if opr=="+":
+                c=n1+n2
+            elif opr=="-":
+                c=n1-n2
+            elif opr=="*":
+                c=n1*n2
+            elif opr=="/":
+                c=n1/n2
+
+    
+    except:
+        c="invalid opr...."
+        print(c)
+
+    return render(request,"calculator.html",{"result":c})

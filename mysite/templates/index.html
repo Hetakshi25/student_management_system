@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<br>
+
+<marquee onmouseover="stop()" onmouseout="start()">
+{% for news in newsdata %}
+   <a href="/newsdetails/{{news.news_slug}}"> {{news.news_title}} </a>&nbsp;&nbsp;
+{% endfor %}
+
+</marquee>
+
+<section class="hero">
+    <h1>Welcome to My Website</h1>
+    <p>Learn Web Development Step by Step</p>
+</section>
+{% for n in servicesdata %}
+
+<section class="i{{n.service_icon}}">
+    <img src="{% static 'img/flight2.jpg' %}">
+    <div>
+        <h2>{{n.service_title}}</h2>
+        <p>
+            {{n.service_des}}
+
+        </p>
+    </div>
+</section>
+{% endfor %}
+
+<!--<section class="info reverse">
+    <img src="{% static 'img/flight3.jpg' %}">
+    <div>
+        <h2>What We Do</h2>
+        <p>
+            We build beginner-friendly websites using HTML and CSS with clean
+            layouts and proper structure.
+        </p>
+    </div>
+</section>
+
+<section class="info">
+    <img src="{% static 'img/flight2.jpg' %}">
+    <div>
+        <h2>Why Choose Us?</h2>
+        <p>
+            Easy explanations, clean design, beginner support and practical
+            learning approach.
+        </p>
+    </div>
+</section>-->
+{% endblock %}
