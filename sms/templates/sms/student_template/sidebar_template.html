@@ -1,0 +1,48 @@
+<div class="sidebar-section-header">Student Panel</div>
+
+<div class="sidebar-item-row">
+    <a href="{% url 'student_home' %}" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">
+        <i class="fas fa-th-large"></i> <span>Dashboard</span>
+    </a>
+</div>
+
+<div class="sidebar-item-row">
+    <a href="/id/STU{{ request.user.student.id }}/" target="_blank" class="nav-link">
+        <i class="fas fa-id-card"></i> <span>My Digital ID</span>
+    </a>
+</div>
+
+<div class="sidebar-section-header">Academic</div>
+
+<div class="sidebar-item-row">
+    <a href="{% url 'student_view_attendance' %}"
+        class="nav-link {% if active_page == 'attendance' %}active{% endif %}">
+        <i class="fas fa-calendar-alt"></i> <span>My Attendance</span>
+    </a>
+</div>
+
+<div class="sidebar-item-row">
+    <a href="{% url 'student_view_result' %}" class="nav-link {% if active_page == 'result' %}active{% endif %}">
+        <i class="fas fa-chart-bar"></i> <span>My Results</span>
+    </a>
+</div>
+
+<div class="sidebar-section-header">Services</div>
+
+<div class="sidebar-item-row">
+    <a href="{% url 'student_apply_leave' %}" class="nav-link {% if active_page == 'leave' %}active{% endif %}">
+        <i class="fas fa-envelope-open"></i> <span>Apply Leave</span>
+    </a>
+</div>
+
+<div class="sidebar-item-row">
+    <a href="{% url 'student_feedback' %}" class="nav-link {% if active_page == 'feedback' %}active{% endif %}">
+        <i class="fas fa-comments"></i> <span>Feedback</span>
+    </a>
+</div>
+
+<div class="sidebar-item-row">
+    <a href="{% url 'student_pay_fee' %}" class="nav-link {% if active_page == 'pay_fee' %}active{% endif %}">
+        <i class="fas fa-qrcode"></i> <span>Pay Fees</span>
+    </a>
+</div>

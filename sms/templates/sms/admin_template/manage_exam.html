@@ -1,0 +1,56 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Manage Exam Schedule{% endblock title %}
+{% block page_title %}Manage Exam Schedule{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='manage_exam' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="card shadow-sm border-0 p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0">Exam Schedules</h5>
+        <a href="{% url 'add_exam' %}" class="btn btn-warning">
+            <i class="fas fa-plus me-2"></i> Add Exam Schedule
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Course</th>
+                    <th>Exam Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Room</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for exam in exams %}
+                <tr>
+                    <td>{{ exam.subject.name }}</td>
+                    <td>{{ exam.subject.course.name }}</td>
+                    <td>{{ exam.exam_date|date:"d M Y" }}</td>
+                    <td>{{ exam.start_time|time:"H:i" }}</td>
+                    <td>{{ exam.end_time|time:"H:i" }}</td>
+                    <td>{{ exam.room_number }}</td>
+                    <td>
+                        <a href="{% url 'edit_exam' exam.id %}" class="btn btn-sm btn-primary" title="Edit"><i
+                                class="fas fa-edit"></i></a>
+                        <a href="{% url 'delete_exam' exam.id %}" class="btn btn-sm btn-danger" title="Delete"
+                            onclick="return confirm('Delete this Exam Schedule?');"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center">No exam schedules found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock main_content %}

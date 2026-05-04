@@ -1,0 +1,21 @@
+from django.contrib import admin
+from .models import CustomUser, Department, Course, Subject, Student, Teacher, Attendance, AttendanceReport, LeaveReportStudent, NotificationStudent, NotificationTeacher, LeaveReportTeacher, FeedbackStudent, FeedbackTeacher, StudentResult, ExamSchedule, StudentFee, TeacherSalary
+
+admin.site.register(CustomUser)
+admin.site.register(Department)
+admin.site.register(Course)
+admin.site.register(Subject)
+admin.site.register(Student)
+admin.site.register(Teacher)
+admin.site.register(Attendance)
+admin.site.register(AttendanceReport)
+admin.site.register(LeaveReportStudent)
+admin.site.register(NotificationStudent)
+admin.site.register(NotificationTeacher)
+admin.site.register(LeaveReportTeacher)
+admin.site.register(FeedbackStudent)
+admin.site.register(FeedbackTeacher)
+admin.site.register(StudentResult)
+admin.site.register(ExamSchedule)
+admin.site.register(StudentFee)
+admin.site.register(TeacherSalary)

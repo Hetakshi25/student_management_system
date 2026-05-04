@@ -1,0 +1,51 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Attendance Report{% endblock title %}
+{% block page_title %}Detailed Attendance Report{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='attendance_report' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+{% for course in attendance_stats %}
+<div class="card shadow-sm border-0 p-4 mb-4">
+    <h5 class="fw-bold mb-4">Course: {{ course.course_name }}</h5>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Subject Name</th>
+                    <th>Students Present</th>
+                    <th>Students Absent</th>
+                    <th>Attendance %</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subject in course.subjects %}
+                <tr>
+                    <td>{{ subject.name }}</td>
+                    <td>{{ subject.total_present }}</td>
+                    <td>{{ subject.total_absent }}</td>
+                    <td>{{ subject.percentage }}%</td>
+                    <td>
+                        {% if subject.percentage >= 75 %}
+                        <span class="badge bg-success">Good</span>
+                        {% elif subject.percentage >= 50 %}
+                        <span class="badge bg-warning text-dark">Average</span>
+                        {% else %}
+                        <span class="badge bg-danger">Low</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% empty %}
+<div class="card shadow-sm border-0 p-4 text-center">
+    <p class="mb-0">No data available for reports</p>
+</div>
+{% endfor %}
+{% endblock main_content %}

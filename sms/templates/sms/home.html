@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Portal | Student Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; color: #0f172a; overflow-x: hidden; background: #fff; }
+
+        /* ── Navbar ── */
+        .top-nav {
+            position: fixed; top: 0; width: 100%; z-index: 999;
+            background: #fff;
+            border-bottom: 1px solid #f1f5f9;
+            padding: 0;
+        }
+        .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 40px; }
+        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-logo-icon { width: 40px; height: 40px; background: #4d61fc; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.1rem; }
+        .nav-logo-text { font-weight: 800; font-size: 1.1rem; color: #0f172a; }
+        .nav-center { display: flex; gap: 36px; }
+        .nav-center a { color: #475569; text-decoration: none; font-weight: 500; font-size: 0.95rem; transition: color 0.2s; }
+        .nav-center a:hover { color: #4d61fc; }
+        .btn-nav-login { background: #4d61fc; color: #fff; padding: 10px 28px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; text-decoration: none; transition: background 0.2s; }
+        .btn-nav-login:hover { background: #3b4ad9; color: #fff; }
+
+        /* ── Hero ── */
+        .hero {
+            min-height: 100vh;
+            background: url("{% static 'images/university.webp' %}") no-repeat center center / cover;
+            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center;
+            padding-top: 72px;
+        }
+        .hero::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: rgba(225, 235, 255, 0.80);
+        }
+        .hero-content { position: relative; z-index: 1; max-width: 780px; padding: 0 20px; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: #fff; border: 1px solid #e2e8f0;
+            border-radius: 50px; padding: 8px 18px;
+            font-size: 0.78rem; font-weight: 700; letter-spacing: 1px;
+            color: #475569; text-transform: uppercase; margin-bottom: 28px;
+        }
+        .hero-badge i { color: #4d61fc; }
+        .hero h1 { font-size: 3.8rem; font-weight: 900; color: #0f172a; line-height: 1.1; letter-spacing: -2px; margin-bottom: 24px; }
+        .hero h1 span { color: #4d61fc; }
+        .hero p { font-size: 1.1rem; color: #475569; line-height: 1.75; max-width: 560px; margin: 0 auto 36px; }
+        .btn-hero { background: #4d61fc; color: #fff; padding: 16px 36px; border-radius: 12px; font-weight: 700; font-size: 1rem; text-decoration: none; display: inline-flex; align-items: center; gap: 10px; transition: all 0.2s; }
+        .btn-hero:hover { background: #3b4ad9; color: #fff; transform: translateY(-2px); }
+        .hero-badges { display: flex; justify-content: center; gap: 32px; margin-top: 48px; flex-wrap: wrap; }
+        .hero-badge-item { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: #475569; font-weight: 500; }
+        .hero-badge-item i { color: #4d61fc; }
+
+        /* ── Features ── */
+        .section { padding: 100px 0; background: #f0f4ff; }
+        .section-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #4d61fc; margin-bottom: 14px; }
+        .section-title { font-size: 2.6rem; font-weight: 900; letter-spacing: -1px; color: #0f172a; margin-bottom: 16px; }
+        .section-sub { color: #64748b; font-size: 1rem; line-height: 1.7; max-width: 500px; margin: 0 auto; }
+
+        .feat-card { background: #fff; border: 1px solid #e2e8f2; border-radius: 16px; padding: 36px 32px; height: 100%; transition: box-shadow 0.3s, transform 0.3s; }
+        .feat-card:hover { box-shadow: 0 12px 40px rgba(77,97,252,0.08); transform: translateY(-4px); }
+        .feat-icon-wrap { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 20px; }
+        .feat-card h5 { font-weight: 800; font-size: 1.05rem; color: #0f172a; margin-bottom: 10px; }
+        .feat-card p { color: #64748b; font-size: 0.9rem; line-height: 1.65; margin: 0; }
+
+        /* ── Roles ── */
+        .roles-section { padding: 100px 0; background: #fff; }
+        .role-card { background: #f0f4ff; border: 1px solid #e2e8f2; border-radius: 16px; padding: 44px 32px; text-align: center; height: 100%; transition: box-shadow 0.3s, transform 0.3s; }
+        .role-card:hover { box-shadow: 0 12px 40px rgba(77,97,252,0.08); transform: translateY(-4px); }
+        .role-icon-wrap { width: 72px; height: 72px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 20px; }
+        .role-card h4 { font-weight: 800; font-size: 1.15rem; color: #0f172a; margin-bottom: 12px; }
+        .role-card p { color: #64748b; font-size: 0.9rem; line-height: 1.65; margin: 0; }
+
+        /* ── Footer ── */
+        footer { background: #f0f4ff; border-top: 1px solid #e2e8f2; padding: 64px 0 0; }
+        .footer-logo-icon { width: 52px; height: 52px; background: #4d61fc; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.4rem; margin-bottom: 16px; }
+        .footer-brand { font-weight: 800; font-size: 1.1rem; color: #0f172a; margin-bottom: 12px; }
+        .footer-desc { color: #64748b; font-size: 0.875rem; line-height: 1.7; max-width: 220px; }
+        .footer-col-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; margin-bottom: 20px; }
+        .footer-links { list-style: none; padding: 0; }
+        .footer-links li { margin-bottom: 12px; }
+        .footer-links a { color: #475569; text-decoration: none; font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+        .footer-links a:hover { color: #4d61fc; }
+        .footer-links a i { font-size: 0.65rem; color: #94a3b8; }
+        .portal-btn { display: flex; align-items: center; gap: 10px; background: #fff; border: 1.5px solid #e2e8f2; border-radius: 10px; padding: 13px 18px; text-decoration: none; color: #1e293b; font-weight: 600; font-size: 0.875rem; margin-bottom: 10px; transition: all 0.2s; width: 100%; }
+        .portal-btn:hover { border-color: #4d61fc; color: #4d61fc; background: #f5f7ff; }
+        .portal-btn i { font-size: 1rem; width: 20px; text-align: center; }
+        .footer-bottom { border-top: 1px solid #e2e8f2; margin-top: 48px; padding: 20px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .footer-bottom p { color: #94a3b8; font-size: 0.825rem; margin: 0; }
+        .footer-bottom-links { display: flex; gap: 24px; }
+        .footer-bottom-links a { color: #94a3b8; text-decoration: none; font-size: 0.825rem; transition: color 0.2s; }
+        .footer-bottom-links a:hover { color: #4d61fc; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.4rem; }
+            .nav-center { display: none; }
+            .nav-inner { padding: 14px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="top-nav">
+        <div class="nav-inner">
+            <a class="nav-logo" href="{% url 'home' %}">
+                <div class="nav-logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                <span class="nav-logo-text">SMS Portal</span>
+            </a>
+            <div class="nav-center">
+                <a href="#features">Features</a>
+                <a href="#roles">Roles</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <a href="{% url 'login_page' %}" class="btn-nav-login">Login</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge"><i class="fas fa-star"></i> Academic Management Platform</div>
+            <h1>The Smarter Way to<br>Manage <span>Academic Life</span></h1>
+            <p>A complete portal for students, teachers, and administrators. Track attendance, results, fees, leaves, and communication — all in one place.</p>
+            <a href="{% url 'login_page' %}" class="btn-hero">Login to Portal <i class="fas fa-arrow-right"></i></a>
+            <div class="hero-badges">
+                <div class="hero-badge-item"><i class="fas fa-shield-alt"></i> Secure & Private</div>
+                <div class="hero-badge-item"><i class="fas fa-bolt"></i> Real-time Updates</div>
+                <div class="hero-badge-item"><i class="fas fa-users"></i> Multi-role Access</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="text-center mb-5">
+                <p class="section-label">Platform Features</p>
+                <h2 class="section-title">Everything You Need, Built In</h2>
+                <p class="section-sub">From daily attendance to exam results, every academic workflow is covered in one unified system.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feat-card">
+                        <div class="feat-icon-wrap" style="background:#eef2ff;color:#4d61fc;"><i class="fas fa-calendar-check"></i></div>
+                        <h5>Attendance Tracking</h5>
+                        <p>Mark and monitor attendance in real-time with subject-wise reports and percentage summaries.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feat-card">
+                        <div class="feat-icon-wrap" style="background:#f0fdf4;color:#10b981;"><i class="fas fa-chart-line"></i></div>
+                        <h5>Result Management</h5>
+                        <p>View exam and assignment marks instantly. Teachers update results, students track progress.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feat-card">
+                        <div class="feat-icon-wrap" style="background:#ecfdf5;color:#059669;"><i class="fas fa-wallet"></i></div>
+                        <h5>Fee Management</h5>
+                        <p>Track fee payments, view pending dues, and maintain complete payment history with status.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feat-card">
+                        <div class="feat-icon-wrap" style="background:#fff7ed;color:#f59e0b;"><i class="fas fa-bell"></i></div>
+                        <h5>Smart Notifications</h5>
+                        <p>Admins send targeted notifications to students or teachers instantly through the portal.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feat-card">
+                        <div class="feat-icon-wrap" style="background:#fdf4ff;color:#c026d3;"><i class="fas fa-file-alt"></i></div>
+                        <h5>Leave Applications</h5>
+                        <p>Apply for leave online, track approval status, and manage leave history without paperwork.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feat-card">
+                        <div class="feat-icon-wrap" style="background:#e0f2fe;color:#0284c7;"><i class="fas fa-comments"></i></div>
+                        <h5>Feedback System</h5>
+                        <p>Students and teachers submit feedback to administration and receive replies on the portal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roles -->
+    <section class="roles-section" id="roles">
+        <div class="container">
+            <div class="text-center mb-5">
+                <p class="section-label">Who Uses It</p>
+                <h2 class="section-title">Built for Every Role</h2>
+                <p class="section-sub">Three dedicated dashboards — each designed for the specific needs of admins, teachers, and students.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="role-card">
+                        <div class="role-icon-wrap" style="background:#eef2ff;color:#4d61fc;"><i class="fas fa-user-shield"></i></div>
+                        <h4>Administrator</h4>
+                        <p>Manage students, teachers, courses, departments, fees, salaries, exams, and generate detailed analytics.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="role-card">
+                        <div class="role-icon-wrap" style="background:#eef2ff;color:#6366f1;"><i class="fas fa-chalkboard-teacher"></i></div>
+                        <h4>Teacher</h4>
+                        <p>Take attendance, update student results, apply for leave, request salary, and communicate via portal.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="role-card">
+                        <div class="role-icon-wrap" style="background:#f0fdf4;color:#10b981;"><i class="fas fa-user-graduate"></i></div>
+                        <h4>Student</h4>
+                        <p>View attendance, check results, track fee payments, apply for leave, and receive notifications.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="container">
+            <div class="row g-5">
+                <!-- Brand -->
+                <div class="col-lg-3">
+                    <div class="footer-logo-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="footer-brand">SMS Portal</div>
+                    <p class="footer-desc">A unified academic management platform for students, teachers, and administrators. Simplifying education, one click at a time.</p>
+                </div>
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-6">
+                    <div class="footer-col-title">Quick Links</div>
+                    <ul class="footer-links">
+                        <li><a href="#features"><i class="fas fa-chevron-right"></i> Features</a></li>
+                        <li><a href="#roles"><i class="fas fa-chevron-right"></i> Roles</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Get Started</a></li>
+                        <li><a href="{% url 'login_page' %}"><i class="fas fa-chevron-right"></i> Login</a></li>
+                    </ul>
+                </div>
+                <!-- Features -->
+                <div class="col-lg-3 col-6">
+                    <div class="footer-col-title">Features</div>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Attendance Tracking</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Result Management</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Fee Management</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Leave Applications</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Notifications</a></li>
+                    </ul>
+                </div>
+                <!-- Portal Access -->
+                <div class="col-lg-3">
+                    <div class="footer-col-title">Portal Access</div>
+                    <a href="{% url 'login_page' %}" class="portal-btn"><i class="fas fa-user-shield" style="color:#4d61fc;"></i> Admin Dashboard</a>
+                    <a href="{% url 'login_page' %}" class="portal-btn"><i class="fas fa-chalkboard-teacher" style="color:#6366f1;"></i> Teacher Portal</a>
+                    <a href="{% url 'login_page' %}" class="portal-btn"><i class="fas fa-user-graduate" style="color:#10b981;"></i> Student Portal</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Student Management System. All rights reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Use</a>
+                    <a href="#">Support</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

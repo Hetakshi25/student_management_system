@@ -1,0 +1,270 @@
+{% extends 'sms/base.html' %}
+
+{% block sidebar_nav %}
+{% include 'sms/teacher_template/sidebar_template.html' with active_page='dashboard' %}
+{% endblock sidebar_nav %}
+
+{% block page_title %}
+Command Center
+{% endblock page_title %}
+
+{% block main_content %}
+<style>
+    /* Light Dashboard UI */
+    .dashboard-bg {
+        background: #f8fafc;
+        border-radius: 20px;
+        padding: 24px;
+        color: #0f172a;
+        min-height: calc(100vh - 120px);
+    }
+    .glass-box {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        background: #f8fafc;
+    }
+    .metric-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+    .icon-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+    .icon-green { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .icon-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; }
+    .icon-orange { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+
+    .notification-item {
+        border-left: 3px solid #3b82f6;
+        background: #f8fafc;
+        margin-bottom: 10px;
+        padding: 12px;
+        border-radius: 0 8px 8px 0;
+        font-size: 0.85rem;
+        color: #334155;
+    }
+</style>
+
+<div class="dashboard-bg">
+    <!-- Top KPI Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="glass-box p-4 h-100 d-flex align-items-center">
+                <div class="metric-icon icon-blue me-3">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-0" style="font-size: 0.8rem; letter-spacing: 1px;">TOTAL STUDENTS</p>
+                    <h2 class="fw-bold mb-0 text-dark">{{ students_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-box p-4 h-100 d-flex align-items-center">
+                <div class="metric-icon icon-purple me-3">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-0" style="font-size: 0.8rem; letter-spacing: 1px;">MY SUBJECTS</p>
+                    <h2 class="fw-bold mb-0 text-dark">{{ subjects_count }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-box p-4 h-100 d-flex align-items-center">
+                <div class="metric-icon icon-green me-3">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-0" style="font-size: 0.8rem; letter-spacing: 1px;">EXCELLENCE RATE</p>
+                    <h2 class="fw-bold mb-0 text-dark">{{ perf_data.Excellent }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-box p-4 h-100 d-flex align-items-center">
+                <div class="metric-icon icon-orange me-3">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-0" style="font-size: 0.8rem; letter-spacing: 1px;">ALERTS</p>
+                    <h2 class="fw-bold mb-0 text-dark">{{ notifications|length }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-7">
+            <div class="glass-box p-4 h-100">
+                <h5 class="fw-bold mb-4" style="color: #475569;"><i class="fas fa-chart-bar me-2"></i>Subject Attendance Analytics</h5>
+                <div class="chart-container">
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="glass-box p-4 h-100">
+                <h5 class="fw-bold mb-4" style="color: #475569;"><i class="fas fa-chart-pie me-2"></i>Student Performance Dist.</h5>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Section -->
+    <div class="row g-4">
+        <!-- Digital Identity Overview -->
+        <div class="col-lg-5">
+            <div class="glass-box p-4 position-relative overflow-hidden h-100" style="border-left: 4px solid #3b82f6;">
+                <i class="fas fa-id-badge position-absolute" style="font-size: 150px; right: -20px; top: 10px; color: rgba(0,0,0,0.03); z-index: 0;"></i>
+                <h5 class="fw-bold mb-4 position-relative z-1" style="color: #475569;">Teacher Identity</h5>
+                
+                <div class="d-flex align-items-center position-relative z-1 mb-4">
+                    <img src="{% if request.user.profile_pic %}{{ request.user.profile_pic.url }}{% else %}https://ui-avatars.com/api/?name={{ request.user.get_full_name|urlencode }}&background=2563eb&color=fff{% endif %}" 
+                         alt="Avatar" class="rounded-circle me-3" style="width: 70px; height: 70px; border: 2px solid #3b82f6;">
+                    <div>
+                        <h4 class="mb-0 fw-bold text-dark">{{ request.user.get_full_name }}</h4>
+                        <p class="mb-0 text-primary">{{ teacher.department.name|default:"Faculty Member" }}</p>
+                    </div>
+                </div>
+                
+                <div class="position-relative z-1">
+                    <a href="/id/TEA{{ teacher.id }}/" target="_blank" class="btn btn-primary rounded-pill px-4 py-2 fw-bold" style="background: linear-gradient(135deg, #3b82f6, #2563eb); border: none;">
+                        <i class="fas fa-qrcode me-2"></i>View Digital ID Card
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Intel -->
+        <div class="col-lg-7">
+            <div class="glass-box p-4 h-100">
+                <h5 class="fw-bold mb-4" style="color: #475569;"><i class="fas fa-bell me-2"></i>Notifications</h5>
+                {% if notifications %}
+                    {% for note in notifications %}
+                    <div class="notification-item">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>
+                        {{ note.message|truncatewords:20 }}
+                        <div class="text-end text-muted" style="font-size: 0.7rem;">{{ note.created_at|timesince }} ago</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-check-double text-muted mb-3" style="font-size: 3rem; opacity: 0.3;"></i>
+                        <p class="text-muted">No new alerts. All systems nominal.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main_content %}
+
+{% block extra_js %}
+{{ perf_values|json_script:"perfValues" }}
+{{ perf_labels|json_script:"perfLabels" }}
+{{ subject_labels|json_script:"subjectLabels" }}
+{{ subject_data|json_script:"subjectData" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Chart text color for light theme
+        Chart.defaults.color = '#64748b';
+        Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+        
+        const perfData = JSON.parse(document.getElementById('perfValues').textContent);
+        const perfLabels = JSON.parse(document.getElementById('perfLabels').textContent);
+        const subjectLabels = JSON.parse(document.getElementById('subjectLabels').textContent);
+        const subjectAttendance = JSON.parse(document.getElementById('subjectData').textContent);
+
+        // Performance Chart (Doughnut)
+        const perfCtx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(perfCtx, {
+            type: 'doughnut',
+            data: {
+                labels: perfLabels,
+                datasets: [{
+                    data: perfData,
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.8)', // Excellent (Green)
+                        'rgba(59, 130, 246, 0.8)', // Good (Blue)
+                        'rgba(245, 158, 11, 0.8)', // Average (Yellow)
+                        'rgba(239, 68, 68, 0.8)'   // At Risk (Red)
+                    ],
+                    borderColor: '#ffffff',
+                    borderWidth: 2,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
+        });
+
+        // Attendance Bar Chart
+        const attCtx = document.getElementById('attendanceChart').getContext('2d');
+        
+        // Gradient for Bar Chart
+        let gradient = attCtx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.8)');
+        gradient.addColorStop(1, 'rgba(59, 130, 246, 0.15)');
+
+        new Chart(attCtx, {
+            type: 'bar',
+            data: {
+                labels: subjectLabels,
+                datasets: [{
+                    label: 'Cumulative Attendance %',
+                    data: subjectAttendance,
+                    backgroundColor: gradient,
+                    borderColor: '#3b82f6',
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    barPercentage: 0.6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        max: 100,
+                        grid: { color: 'rgba(0,0,0,0.06)' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    });
+</script>
+{% endblock extra_js %}

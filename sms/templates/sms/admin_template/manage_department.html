@@ -1,0 +1,122 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Manage Departments{% endblock title %}
+{% block page_title %}Manage Departments{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='manage_department' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="card shadow-sm border-0 p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0">Department List</h5>
+        <a href="{% url 'add_department' %}" class="btn btn-primary"><i class="fas fa-plus me-2"></i> Add Department</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Department Name</th>
+                    <th>Created At</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dept in departments %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td class="dept-name-cell" data-name="{{ dept.name }}" data-count="{{ dept.teacher_count }}"
+                        data-teachers="{{ dept.teachers_json }}">
+                        <a href="javascript:void(0)" class="text-decoration-none fw-bold"
+                            style="color: var(--primary-color);">
+                            {{ dept.name }}
+                        </a>
+                    </td>
+                    <td>{{ dept.created_at|date:"d M Y" }}</td>
+                    <td>
+                        <a href="{% url 'edit_department' dept.id %}" class="btn btn-sm btn-info text-white">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{% url 'delete_department' dept.id %}" class="btn btn-sm btn-danger"
+                            onclick="return confirm('Are you sure?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No departments found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock main_content %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function () {
+        $('.dept-name-cell').on('click', function () {
+            const deptName = $(this).data('name');
+            const teacherCount = $(this).data('count');
+            const teachers = $(this).data('teachers');
+
+            let teachersListHtml = '';
+            if (teachers && teachers.length > 0) {
+                teachersListHtml = `
+                    <div class="mt-4 text-start">
+                        <h6 class="fw-bold mb-3 border-bottom pb-2">Teachers & Lesson Assignments</h6>
+                        <div class="list-group list-group-flush">
+                            ${teachers.map(t => `
+                                <div class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent">
+                                    <div class="d-flex flex-column">
+                                        <span class="fw-bold"><i class="fas fa-user-tie me-2 text-primary"></i>${t.name}</span>
+                                        <span class="text-muted small ps-4"> Assigned: ${t.subject_count} Lesson(s) in this Dept</span>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-soft-info text-info rounded-pill d-block mb-1">
+                                            Daily Target: ${t.target}
+                                        </span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else {
+                teachersListHtml = '<p class="text-muted mt-3">No teachers assigned to this department.</p>';
+            }
+
+            Swal.fire({
+                title: deptName,
+                html: `
+                <div class="p-2">
+                    <div class="mb-3 text-center">
+                        <i class="fas fa-university fa-3x text-primary border-bottom pb-3 mb-3"></i>
+                    </div>
+                    <div class="row text-center mb-3">
+                        <div class="col-12">
+                            <p class="text-muted mb-0 small text-uppercase">Total Teachers</p>
+                            <h2 class="fw-bold text-dark">${teacherCount}</h2>
+                        </div>
+                    </div>
+                    ${teachersListHtml}
+                </div>
+            `,
+                showConfirmButton: true,
+                confirmButtonText: 'Close',
+                confirmButtonColor: '#0d6efd',
+            });
+        });
+    });
+</script>
+
+<style>
+    .dept-name-cell:hover a {
+        text-decoration: underline !important;
+    }
+</style>
+{% endblock extra_js %}

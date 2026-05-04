@@ -1,0 +1,40 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Edit Student Result{% endblock title %}
+{% block page_title %}Edit Result for {{ result.student.user.get_full_name }}{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='result_report' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <div class="card shadow-sm border-0 p-4">
+            <form action="{% url 'admin_edit_result_save' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="result_id" value="{{ result.id }}">
+
+                <h5 class="fw-bold mb-4">Edit Marks for {{ result.subject.name }}</h5>
+
+                <div class="mb-3">
+                    <label class="form-label">Exam Marks</label>
+                    <input type="number" step="0.01" name="exam_marks" class="form-control"
+                        value="{{ result.subject_exam_marks }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Assignment Marks</label>
+                    <input type="number" step="0.01" name="assign_marks" class="form-control"
+                        value="{{ result.subject_assignment_marks }}" required>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary w-100">Update Result</button>
+                    <a href="{% url 'admin_manage_result' %}"
+                        class="btn btn-link w-100 mt-2 text-decoration-none text-muted">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock main_content %}

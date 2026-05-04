@@ -1,0 +1,56 @@
+{% extends 'sms/base.html' %}
+{% block title %}System Notifications | Receipt Alerts{% endblock %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='admin_notification' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-gradient-danger text-white py-3">
+                    <h5 class="mb-0 font-weight-bold"><i class="fas fa-bell me-2"></i> Heavy Payment Notifications</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="list-group list-group-flush">
+                        {% for notification in notifications %}
+                        <div class="list-group-item px-0 py-3 border-0 border-bottom">
+                            <div class="d-flex align-items-start">
+                                <div class="bg-light-danger p-3 rounded-circle me-3">
+                                    <i class="fas fa-receipt text-danger"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="mb-1 font-weight-bold">System Alert: Heavy Fee Processed</h6>
+                                        <small class="text-muted">{{ notification.created_at|timesince }} ago</small>
+                                    </div>
+                                    <p class="text-secondary mb-0">{{ notification.message }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-check-circle d-block mb-3 fs-1 opacity-25 text-success"></i>
+                            <h5 class="text-muted">No heavy payment alerts yet</h5>
+                            <p class="small text-secondary">All transactions are within normal limits.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-danger {
+        background: linear-gradient(45deg, #e74a3b 0%, #be2617 100%);
+    }
+    .bg-light-danger {
+        background-color: #fceaea;
+    }
+    .rounded-4 { border-radius: 1rem !important; }
+</style>
+{% endblock %}

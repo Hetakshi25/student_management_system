@@ -1,0 +1,140 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Manage Results{% endblock title %}
+{% block page_title %}Manage Student Results{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='result_manage' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="card shadow-sm border-0 p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0">Result List</h5>
+        <div class="d-flex gap-2">
+            <a href="{% url 'admin_result_report' %}" class="btn btn-outline-primary btn-sm">Summary Report</a>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addResultModal"><i
+                    class="fas fa-plus me-2"></i> Add Result</button>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Student</th>
+                    <th>Subject</th>
+                    <th>Exam Marks</th>
+                    <th>Assign Marks</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                <tr>
+                    <td>{{ row.id }}</td>
+                    <td>{{ row.student.user.get_full_name }}</td>
+                    <td>{{ row.subject.name }}</td>
+                    <td>{{ row.subject_exam_marks }}</td>
+                    <td>{{ row.subject_assignment_marks }}</td>
+                    <td>
+                        <a href="{% url 'admin_edit_result' row.id %}" class="btn btn-sm btn-info text-white"><i
+                                class="fas fa-edit"></i></a>
+                        <a href="{% url 'delete_result_admin' row.id %}" class="btn btn-sm btn-danger"
+                            onclick="return confirm('Delete this result record?')"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No result records found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Result Modal -->
+<div class="modal fade" id="addResultModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content card shadow-sm border-0 border-0">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Add Student Result</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addResultForm">
+                    <div class="mb-3">
+                        <label class="form-label">Student</label>
+                        <select id="res_student" class="form-control" required>
+                            <option value="">Select Student</option>
+                            {% for student in students %}
+                            <option value="{{ student.id }}">{{ student.user.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Subject</label>
+                        <select id="res_subject" class="form-control" required>
+                            <option value="">Select Subject</option>
+                            {% for subject in subjects %}
+                            <option value="{{ subject.id }}">{{ subject.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Exam Marks</label>
+                            <input type="number" step="0.01" id="res_exam" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Assignment Marks</label>
+                            <input type="number" step="0.01" id="res_assign" class="form-control" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Save Result</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.getElementById('addResultForm').onsubmit = function (e) {
+        e.preventDefault();
+        const studentId = document.getElementById('res_student').value;
+        const subjectId = document.getElementById('res_subject').value;
+        const examMarks = document.getElementById('res_exam').value;
+        const assignMarks = document.getElementById('res_assign').value;
+        const btn = this.querySelector('button[type="submit"]');
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
+
+        fetch("{% url 'admin_add_result_ajax' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: new URLSearchParams({
+                'student': studentId,
+                'subject': subjectId,
+                'exam': examMarks,
+                'assign': assignMarks
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    location.reload();
+                } else {
+                    alert("Error: " + data.message);
+                    btn.disabled = false;
+                    btn.innerText = 'Save Result';
+                }
+            });
+    };
+</script>
+{% endblock extra_js %}
+{% endblock main_content %}

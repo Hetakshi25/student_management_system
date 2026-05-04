@@ -1,0 +1,224 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Daily Lesson Tracker{% endblock title %}
+{% block page_title %}Teacher Lesson Efficiency{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='lesson_tracker' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0 p-4">
+                <form method="GET" class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Select Date to Review</label>
+                        <input type="date" name="date" class="form-control" value="{{ selected_date }}"
+                            min="{% now 'Y-m-d' %}" max="{% now 'Y-m-d' %}" onchange="this.form.submit()">
+                    </div>
+                    <div class="col-md-8 text-end">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#assignTargetModal">
+                            <i class="fas fa-plus me-2"></i> Assign Lessons for Today
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0 p-0 overflow-hidden">
+                <div class="card-header bg-white py-3 border-0">
+                    <h5 class="mb-0 fw-bold">Efficiency Report: {{ selected_date }}</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4 py-3 text-uppercase small fw-bold text-muted">Teacher</th>
+                                <th class="text-center py-3 text-uppercase small fw-bold text-muted">Assigned</th>
+                                <th class="text-center py-3 text-uppercase small fw-bold text-muted">Completed</th>
+                                <th class="text-center py-3 text-uppercase small fw-bold text-muted">Efficiency Score
+                                </th>
+                                <th class="text-center py-3 text-uppercase small fw-bold text-muted">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in report_data %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold text-dark">{{ data.teacher.user.get_full_name }}</div>
+                                </td>
+                                <td class="text-center h5 mb-0 fw-bold">{{ data.target }}</td>
+                                <td class="text-center h5 mb-0 fw-bold">{{ data.actual }}</td>
+                                <td class="text-center">
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        <div class="progress flex-grow-1 mx-3"
+                                            style="height: 10px; width: 100px; border-radius: 5px;">
+                                            <div class="progress-bar bg-{{ data.status_color }} dynamic-progress"
+                                                style="--progress-width: {{ data.efficiency|default:0 }}%;"></div>
+                                        </div>
+                                        <span class="fw-bold">{{ data.efficiency }}%</span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    {% if data.efficiency >= 90 %}
+                                    <span class="badge bg-success rounded-pill px-3 shadow-sm">
+                                        <i class="fas fa-crown me-1 text-warning"></i> Master Level
+                                    </span>
+                                    {% elif data.efficiency >= 70 %}
+                                    <span class="badge bg-warning text-dark rounded-pill px-3 shadow-sm">
+                                        <i class="fas fa-medal me-1 text-primary"></i> Advanced Level
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-info text-white rounded-pill px-3 shadow-sm">
+                                        <i class="fas fa-star me-1 text-white"></i> Intermediate
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-5 text-muted">No data available for this date.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Assigning Targets -->
+<div class="modal fade" id="assignTargetModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content card shadow-sm border-0 border-0">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Assign Lesson Target</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="targetForm">
+                    <div class="mb-3">
+                        <label class="form-label">Teacher</label>
+                        <select id="target_teacher" class="form-select border-2" required>
+                            <option value="">Select Teacher...</option>
+                            {% for teacher in teachers %}
+                            <option value="{{ teacher.id }}">{{ teacher.user.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Lessons to Assign</label>
+                        <input type="number" id="target_count" class="form-control border-2" min="1" max="10" value="5"
+                            required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Date</label>
+                        <input type="date" id="target_date" class="form-control border-2" value="{% now 'Y-m-d' %}"
+                            min="2026-01-01" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 shadow-sm py-2 fw-bold">
+                        Save Assignment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock main_content %}
+
+{% block extra_css %}
+<style>
+    .dynamic-progress {
+        width: var(--progress-width, 0%);
+        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .table thead th {
+        border: none;
+        letter-spacing: 0.5px;
+    }
+
+    .table tbody td {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        padding-top: 1.25rem;
+        padding-bottom: 1.25rem;
+    }
+
+    .badge {
+        font-weight: 600;
+        font-size: 0.75rem;
+        letter-spacing: 0.3px;
+    }
+</style>
+{% endblock extra_css %}
+
+{% block extra_js %}
+<script>
+    // Disable Back Button
+    history.pushState(null, null, location.href);
+    window.onpopstate = function () {
+        history.go(1);
+    };
+
+    document.getElementById('targetForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const teacherId = document.getElementById('target_teacher').value;
+        const count = document.getElementById('target_count').value;
+        const date = document.getElementById('target_date').value;
+
+        const btn = this.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
+
+        fetch("{% url 'save_lesson_target' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: new URLSearchParams({
+                'teacher_id': teacherId,
+                'target_count': count,
+                'target_date': date
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    location.reload();
+                } else {
+                    alert("Error: " + data.message);
+                    btn.disabled = false;
+                    btn.innerText = 'Save Assignment';
+                }
+            });
+    });
+</script>
+<style>
+    .bg-soft-primary {
+        background-color: rgba(77, 97, 252, 0.1);
+    }
+
+    .btn-xs {
+        padding: 0.125rem 0.25rem;
+        font-size: 0.75rem;
+    }
+
+    .progress {
+        background-color: #f0f0f0;
+    }
+
+    .dynamic-progress {
+        width: var(--progress-width, 0%);
+        transition: width 0.6s ease;
+    }
+</style>
+{% endblock extra_js %}

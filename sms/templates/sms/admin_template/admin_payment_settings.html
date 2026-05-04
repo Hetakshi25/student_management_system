@@ -1,0 +1,72 @@
+{% extends 'sms/base.html' %}
+{% block title %}Payment Settings | Activate Wallet{% endblock %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='payment_settings' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-white text-primary p-3 rounded-circle me-3">
+                            <i class="fas fa-wallet fs-4"></i>
+                        </div>
+                        <div>
+                            <h4 class="mb-0 fw-bold">Register Payment Method</h4>
+                            <p class="mb-0 opacity-75">Configure your institutional UPI wallet for student fees</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-5">
+                    <form action="{% url 'admin_payment_settings_save' %}" method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-dark">Institutional Merchant Name</label>
+                            <div class="input-group input-group-lg border rounded-3 p-1">
+                                <span class="input-group-text border-0 bg-transparent text-muted"><i class="fas fa-university"></i></span>
+                                <input type="text" name="merchant_name" class="form-control border-0 shadow-none" placeholder="e.g. Academy Merchant" value="{{ merchant_name }}" required>
+                            </div>
+                            <div class="form-text mt-2 text-muted">This name will appear on the student's payment screen.</div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="form-label fw-bold text-dark">UPI VPA (Virtual Payment Address)</label>
+                            <div class="input-group input-group-lg border rounded-3 p-1">
+                                <span class="input-group-text border-0 bg-transparent text-muted"><i class="fas fa-at"></i></span>
+                                <input type="text" name="upi_id" class="form-control border-0 shadow-none" placeholder="e.g. school@okicici" value="{{ upi_id }}" required>
+                            </div>
+                            <div class="form-text mt-2 text-muted">Register your Google Pay, PhonePe, or BHIM UPI ID here to activate scanning.</div>
+                        </div>
+
+                        <div class="alert alert-info border-0 rounded-3 p-4 mb-5">
+                            <div class="d-flex">
+                                <i class="fas fa-info-circle fs-4 me-3 mt-1"></i>
+                                <div>
+                                    <h6 class="fw-bold mb-1">How it works:</h6>
+                                    <p class="small mb-0 opacity-75">Once you click 'Activate', the system generates a dynamic QR code for every student. When they scan the QR in their wallet app, the correct fee amount and your merchant details will be automatically populated for secure payment.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg py-3 fw-bold rounded-3 shadow-sm hover-lift">
+                                Activate Payment Method <i class="fas fa-check-circle ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-lift { transition: transform 0.2s, box-shadow 0.2s; }
+    .hover-lift:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+</style>
+{% endblock %}

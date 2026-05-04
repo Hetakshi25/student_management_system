@@ -1,0 +1,336 @@
+{% extends 'sms/base.html' %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='dashboard' %}
+{% endblock sidebar_nav %}
+
+{% block page_title %}
+Institutional Intelligence
+{% endblock page_title %}
+
+{% block main_content %}
+<style>
+    /* Light Admin Dashboard UI */
+    .dashboard-bg {
+        background: #f8fafc;
+        border-radius: 20px;
+        padding: 24px;
+        color: #0f172a;
+        min-height: calc(100vh - 120px);
+    }
+
+    .glass-box {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        background: #f8fafc;
+    }
+
+    .metric-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+
+    .icon-blue {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+    }
+
+    .icon-green {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+    }
+
+    .icon-purple {
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        color: white;
+    }
+
+    .icon-orange {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+    }
+
+    .icon-cyan {
+        background: linear-gradient(135deg, #06b6d4, #0891b2);
+        color: white;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+
+    .stat-table {
+        color: #0f172a !important;
+    }
+
+    .stat-table thead th {
+        background: #f1f5f9;
+        border: none;
+        color: #64748b !important;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 15px;
+    }
+
+    .stat-table tbody td {
+        border-bottom: 1px solid #f1f5f9;
+        padding: 15px;
+        font-size: 0.9rem;
+        color: #334155 !important;
+    }
+</style>
+
+<div class="dashboard-bg">
+
+    <!-- Top Strategic Banner -->
+    <div class="glass-box p-4 mb-4"
+        style="background: linear-gradient(135deg, rgba(37,99,235,0.06), rgba(219,234,254,0.5)); border-left: 5px solid #3b82f6;">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h3 class="fw-bold text-dark mb-2">Systems Operational</h3>
+                <p class="text-muted mb-0">Institutional Command Center is active. Monitoring {{ student_count }}
+                    students across {{ department_count }} departments.</p>
+            </div>
+            <div class="col-lg-4 text-end d-none d-lg-block">
+                <div
+                    class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2">
+                    <i class="fas fa-circle me-2" style="font-size: 8px;"></i>LIVE SYNC ACTIVE
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Metrics Matrix -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="glass-box p-4 h-100">
+                <div class="metric-icon icon-blue mb-3">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <p class="mb-1" style="font-size: 0.75rem; letter-spacing: 1px; color: #64748b !important;">TOTAL
+                    STUDENTS</p>
+                <h2 class="fw-bold mb-0 text-dark">{{ student_count }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="glass-box p-4 h-100">
+                <div class="metric-icon icon-purple mb-3">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <p class="mb-1" style="font-size: 0.75rem; letter-spacing: 1px; color: #64748b !important;">ACTIVE
+                    FACULTY</p>
+                <h2 class="fw-bold mb-0 text-dark">{{ teacher_count }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="glass-box p-4 h-100">
+                <div class="metric-icon icon-cyan mb-3">
+                    <i class="fas fa-building"></i>
+                </div>
+                <p class="mb-1" style="font-size: 0.75rem; letter-spacing: 1px; color: #64748b !important;">DEPARTMENTS
+                </p>
+                <h2 class="fw-bold mb-0 text-dark">{{ department_count }}</h2>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="glass-box p-4 h-100">
+                <div class="metric-icon icon-orange mb-3">
+                    <i class="fas fa-book"></i>
+                </div>
+                <p class="mb-1" style="font-size: 0.75rem; letter-spacing: 1px; color: #64748b !important;">COURSES
+                    RUNNING</p>
+                <h2 class="fw-bold mb-0 text-dark">{{ course_count }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Hub -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-7">
+            <div class="glass-box p-4 h-100">
+                <h5 class="fw-bold mb-4" style="color: #475569;"><i class="fas fa-chart-bar me-2"></i>Course Student
+                    Distribution</h5>
+                <div class="chart-container">
+                    <canvas id="courseChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="glass-box p-4 h-100">
+                <h5 class="fw-bold mb-4" style="color: #475569;"><i class="fas fa-chart-pie me-2"></i>Institutional
+                    Balance</h5>
+                <div class="chart-container">
+                    <canvas id="ratioChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Operational Data Matrices -->
+    <div class="row g-4">
+        <!-- Latest Onboarding -->
+        <div class="col-lg-8">
+            <div class="glass-box overflow-hidden">
+                <div class="p-4 d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0" style="color: #475569;"><i class="fas fa-id-card me-2"></i>Recent Personnel
+                        Onboarding</h5>
+                    <a href="{% url 'manage_student' %}" class="btn btn-sm btn-outline-info rounded-pill px-3">View
+                        Registry</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table stat-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>IDENTITY</th>
+                                <th>DESIGNATION</th>
+                                <th>DEPLOYMENT</th>
+                                <th>TIMESTAMP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in latest_students %}
+                            <tr>
+                                <td class="fw-bold" style="color: #2563eb !important;">{{ student.user.get_full_name }}
+                                </td>
+                                <td><span class="badge bg-info bg-opacity-10 text-info">STUDENT</span></td>
+                                <td style="color: #334155 !important;">{{ student.course.name }}</td>
+                                <td style="color: #64748b !important;">{{ student.created_at|date:"d M Y" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">No recent entries found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Intel / Feedback Feed -->
+        <div class="col-lg-4">
+            <div class="glass-box p-4 h-100">
+                <h5 class="fw-bold mb-4" style="color: #475569;"><i class="fas fa-comment-alt me-2"></i>Recent Intel /
+                    Feedback</h5>
+
+                {% for feed in recent_feedback %}
+                <div class="mb-3 p-3 rounded"
+                    style="background: #f8fafc; border-left: 3px solid #06b6d4;">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="fw-bold text-dark small" style="font-size: 0.8rem;">{{
+                            feed.student.user.get_full_name }}</span>
+                        <span class="text-muted" style="font-size: 0.65rem;">{{ feed.created_at|timesince }} ago</span>
+                    </div>
+                    <p class="text-muted mb-0" style="font-size: 0.8rem;">{{ feed.feedback|truncatewords:12 }}</p>
+                </div>
+                {% empty %}
+                <div class="text-center py-5">
+                    <i class="fas fa-ghost text-muted mb-3" style="font-size: 3rem; opacity: 0.1;"></i>
+                    <p class="text-muted">No feedback reports found.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock main_content %}
+
+{% block extra_js %}
+{{ course_name_list|json_script:"courseLabels" }}
+{{ student_count_list_in_course|json_script:"studentCounts" }}
+{{ student_count|json_script:"rawStudentCount" }}
+{{ teacher_count|json_script:"rawTeacherCount" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Chart defaults for light theme
+        Chart.defaults.color = '#64748b';
+        Chart.defaults.font.family = "'Outfit', sans-serif";
+
+        const courseData = JSON.parse(document.getElementById('courseLabels').textContent);
+        const countData = JSON.parse(document.getElementById('studentCounts').textContent);
+        const sCount = JSON.parse(document.getElementById('rawStudentCount').textContent);
+        const tCount = JSON.parse(document.getElementById('rawTeacherCount').textContent);
+
+        // Course Bar Chart
+        const ctx = document.getElementById('courseChart').getContext('2d');
+        let gradientBar = ctx.createLinearGradient(0, 0, 0, 400);
+        gradientBar.addColorStop(0, 'rgba(59, 130, 246, 0.8)');
+        gradientBar.addColorStop(1, 'rgba(37, 99, 235, 0.2)');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: courseData,
+                datasets: [{
+                    label: 'Students Enrolled',
+                    data: countData,
+                    backgroundColor: gradientBar,
+                    borderColor: '#3b82f6',
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    barPercentage: 0.5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0,0,0,0.06)' }
+                    },
+                    x: { grid: { display: false } }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Balance Doughnut Chart
+        const ctxRatio = document.getElementById('ratioChart').getContext('2d');
+        new Chart(ctxRatio, {
+            type: 'doughnut',
+            data: {
+                labels: ['Students', 'Faculty'],
+                datasets: [{
+                    data: [sCount, tCount],
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(139, 92, 246, 0.8)'
+                    ],
+                    borderColor: '#ffffff',
+                    borderWidth: 2,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+    });
+</script>
+{% endblock extra_js %}

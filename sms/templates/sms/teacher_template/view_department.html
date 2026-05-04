@@ -1,0 +1,51 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}View Departments{% endblock title %}
+{% block page_title %}Departments Registry{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/teacher_template/sidebar_template.html' with active_page='view_department' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm border-0 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0">List of All Departments</h5>
+                <span class="badge bg-soft-primary text-primary px-3">Read-Only Access</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">ID</th>
+                            <th>Department Name</th>
+                            <th>Created On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dept in departments %}
+                        <tr>
+                            <td class="ps-4 text-muted">{{ forloop.counter }}</td>
+                            <td class="fw-bold">{{ dept.name }}</td>
+                            <td class="text-muted small">{{ dept.created_at|date:"d M Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center py-5 text-muted">No departments found in the system.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-soft-primary {
+        background-color: rgba(77, 97, 252, 0.1);
+    }
+</style>
+{% endblock main_content %}

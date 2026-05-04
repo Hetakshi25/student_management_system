@@ -1,0 +1,136 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Teacher Broadcasts{% endblock title %}
+{% block page_title %}Teacher Broadcasts{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='teacher_notification' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="card shadow-sm border-0 p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0">Teacher List</h5>
+        <button class="btn btn-warning show_notification_modal" data-id="all" data-name="All Teachers">
+            <i class="fas fa-bullhorn me-2"></i> Broadcast to All
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teacher in teachers %}
+                <tr>
+                    <td>{{ teacher.id }}</td>
+                    <td>{{ teacher.user.get_full_name }}</td>
+                    <td>{{ teacher.user.email }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary show_notification_modal" data-id="{{ teacher.id }}"
+                            data-name="{{ teacher.user.get_full_name }}">Send Notification</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 p-4 mt-4">
+    <h5 class="fw-bold mb-4">Notification History</h5>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Teacher</th>
+                    <th>Message</th>
+                    <th>Sent At</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in notifications %}
+                <tr>
+                    <td>{{ row.id }}</td>
+                    <td>{{ row.teacher.user.get_full_name }}</td>
+                    <td>{{ row.message }}</td>
+                    <td>{{ row.created_at|date:"d M Y H:i" }}</td>
+                    <td>
+                        <a href="{% url 'delete_teacher_notification' row.id %}" class="btn btn-sm btn-danger"
+                            onclick="return confirm('Delete this notification?')"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No notifications sent yet</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content card shadow-sm border-0">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Send Notification to <span id="teacher_name_span"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="teacher_id_hidden">
+                <textarea id="notification_msg" class="form-control" rows="4"
+                    placeholder="Enter message here..."></textarea>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="send_notification_btn">Send Now</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main_content %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).on("click", ".show_notification_modal", function () {
+        var teacher_id = $(this).data("id");
+        var teacher_name = $(this).data("name");
+        $("#teacher_id_hidden").val(teacher_id);
+        $("#teacher_name_span").text(teacher_name);
+        $("#notificationModal").modal("show");
+    });
+
+    $(document).on("click", "#send_notification_btn", function () {
+        var teacher_id = $("#teacher_id_hidden").val();
+        var message = $("#notification_msg").val();
+
+        $.ajax({
+            url: "{% url 'send_teacher_notification_save' %}",
+            type: "POST",
+            data: {
+                teacher_id: teacher_id,
+                message: message,
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            success: function (response) {
+                if (response == "OK") {
+                    alert("Notification Sent Successfully");
+                    $("#notificationModal").modal("hide");
+                    $("#notification_msg").val("");
+                } else {
+                    alert("Error in sending notification");
+                }
+            }
+        });
+    });
+</script>
+{% endblock extra_js %}

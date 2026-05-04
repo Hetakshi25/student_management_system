@@ -1,0 +1,36 @@
+﻿<div class="card shadow-sm border-0 p-3">
+    <h6 class="fw-bold mb-3">Student List</h6>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Attendance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                    <td>{{ student.id }}</td>
+                    <td>{{ student.user.get_full_name }}</td>
+                    <td>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="student_ids[]"
+                                value="{{ student.id }}" checked>
+                            <label class="form-check-label">Present</label>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center">No students found in this course</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if students %}
+    <button type="button" class="btn btn-success w-100 mt-3" id="save_attendance">Save Attendance</button>
+    {% endif %}
+</div>

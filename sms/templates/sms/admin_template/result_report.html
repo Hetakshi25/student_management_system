@@ -1,0 +1,113 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Result Report{% endblock title %}
+{% block page_title %}Detailed Result Report{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='result_report' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-6 col-lg-2 mb-4">
+        <div class="stat-card card shadow-sm border-0 h-100">
+            <div class="stat-icon small-icon">
+                <i class=" fas fa-user-graduate"></i>
+            </div>
+            <div>
+                <h3 class="mb-0 fw-bold">{{ student_count }}</h3>
+                <p class="text-muted mb-0">Students</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-2 mb-4">
+        <div class="stat-card card shadow-sm border-0 h-100">
+            <div class="stat-icon small-icon">
+                <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <div>
+                <h3 class="mb-0 fw-bold">{{ teacher_count }}</h3>
+                <p class="text-muted mb-0">Teachers</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-2 mb-4">
+        <div class="stat-card card shadow-sm border-0 h-100">
+            <div class="stat-icon small-icon">
+                <i class="fas fa-building"></i>
+            </div>
+            <div>
+                <h3 class="mb-0 fw-bold">{{ department_count }}</h3>
+                <p class="text-muted mb-0">Depts</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3 mb-4">
+        <div class="stat-card card shadow-sm border-0 h-100">
+            <div class="stat-icon small-icon">
+                <i class="fas fa-book"></i>
+            </div>
+            <div>
+                <h3 class="mb-0 fw-bold">{{ course_count }}</h3>
+                <p class="text-muted mb-0">Courses</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3 mb-4">
+        <div class="stat-card card shadow-sm border-0 h-100">
+            <div class="stat-icon small-icon">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <div>
+                <h3 class="mb-0 fw-bold">{{ subject_count }}</h3>
+                <p class="text-muted mb-0">Subjects</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 p-4 mt-4">
+    <h5 class="fw-bold mb-4">Detailed Performance Breakdown</h5>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Course</th>
+                    <th>Avg Exam Marks</th>
+                    <th>Avg Assignment Marks</th>
+                    <th>Total Students</th>
+                    <th>Performance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in result_stats %}
+                <tr>
+                    <td>{{ row.subject_name }}</td>
+                    <td>{{ row.course_name }}</td>
+                    <td>{{ row.avg_exam }}</td>
+                    <td>{{ row.avg_assign }}</td>
+                    <td>{{ row.total_students }}</td>
+                    <td>
+                        {% with total_avg=row.avg_exam|add:row.avg_assign %}
+                        {% if total_avg >= 80 %}
+                        <span class="badge bg-success">Excellent</span>
+                        {% elif total_avg >= 60 %}
+                        <span class="badge bg-primary">Good</span>
+                        {% elif total_avg >= 40 %}
+                        <span class="badge bg-warning text-dark">Average</span>
+                        {% else %}
+                        <span class="badge bg-danger">Poor</span>
+                        {% endif %}
+                        {% endwith %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No result data available</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock main_content %}

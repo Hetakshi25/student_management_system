@@ -1,0 +1,65 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Student Leave{% endblock title %}
+{% block page_title %}Manage Student Leave{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='student_leave' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="card shadow-sm border-0 p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0">Leave Applications</h5>
+        <a href="{% url 'student_apply_leave' %}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-2"></i> Add
+            Leave</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Student Name</th>
+                    <th>Leave Date</th>
+                    <th>Leave Message</th>
+                    <th>Applied On</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leave in leaves %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ leave.student.user.get_full_name }}</td>
+                    <td>{{ leave.leave_date }}</td>
+                    <td>{{ leave.leave_message }}</td>
+                    <td>{{ leave.created_at }}</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            {% if leave.leave_status == 0 %}
+                            <a href="{% url 'student_approve_leave' leave.id %}"
+                                class="btn btn-sm btn-success">Approve</a>
+                            <a href="{% url 'student_disapprove_leave' leave.id %}"
+                                class="btn btn-sm btn-danger">Reject</a>
+                            {% elif leave.leave_status == 1 %}
+                            <span class="badge bg-success">Approved</span>
+                            {% else %}
+                            <span class="badge bg-danger">Rejected</span>
+                            {% endif %}
+
+                            <a href="{% url 'edit_student_leave' leave.id %}" class="btn btn-sm btn-info text-white"><i
+                                    class="fas fa-edit"></i></a>
+                            <a href="{% url 'delete_student_leave' leave.id %}" class="btn btn-sm btn-danger"
+                                onclick="return confirm('Delete this leave record?')"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No leave applications found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock main_content %}

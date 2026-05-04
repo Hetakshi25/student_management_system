@@ -1,0 +1,289 @@
+{% extends 'sms/base.html' %}
+
+{% block sidebar_nav %}
+{% include 'sms/student_template/sidebar_template.html' with active_page='student_home' %}
+{% endblock sidebar_nav %}
+
+{% block page_title %}
+Student Command Center
+{% endblock page_title %}
+
+{% block main_content %}
+<style>
+    /* Light Dashboard UI */
+    .dashboard-bg {
+        background: #f8fafc;
+        border-radius: 20px;
+        padding: 24px;
+        color: #0f172a;
+        min-height: calc(100vh - 120px);
+    }
+
+    .glass-box {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        background: #f8fafc;
+    }
+
+    .metric-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+
+    .icon-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; }
+    .icon-green { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+    .icon-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; }
+    .icon-orange { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+
+    .subject-row {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-bottom: 12px;
+        border-left: 3px solid #3b82f6;
+        transition: background 0.3s ease;
+    }
+
+    .subject-row:hover {
+        background: #eff6ff;
+    }
+</style>
+
+<div class="dashboard-bg">
+
+    <!-- Welcome Ribbon -->
+    <div class="glass-box p-4 mb-4"
+        style="background: linear-gradient(135deg, rgba(59,130,246,0.07), rgba(37,99,235,0.03)); border: 1px solid rgba(59,130,246,0.15);">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h3 class="fw-bold text-dark mb-1">Welcome back, {{ student.user.first_name }}!</h3>
+                <p class="text-muted mb-0" style="font-size: 0.9rem;">Course: <span class="text-primary">{{ student.course.name }}</span></p>
+            </div>
+            <div class="d-none d-md-block">
+                <i class="fas fa-graduation-cap text-primary" style="font-size: 3rem; opacity: 0.5;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top KPI Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="glass-box p-4 h-100 d-flex align-items-center">
+                <div class="metric-icon icon-blue me-3">
+                    <i class="fas fa-percent"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-0" style="font-size: 0.75rem; letter-spacing: 1px;">ATTENDANCE RATE</p>
+                    <h2
+                        class="fw-bold mb-0 {% if attendance_percent >= 75 %}text-success{% elif attendance_percent >= 50 %}text-warning{% else %}text-danger{% endif %}">
+                        {{ attendance_percent }}%</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-box p-4 h-100 d-flex align-items-center">
+                <div class="metric-icon icon-green me-3">
+                    <i class="fas fa-file-signature"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-0" style="font-size: 0.75rem; letter-spacing: 1px;">CUMULATIVE GPA/AVG</p>
+                    <h2 class="fw-bold mb-0 text-dark">{{ avg_marks }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-box p-4 h-100 d-flex align-items-center">
+                <div class="metric-icon icon-purple me-3">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-0" style="font-size: 0.75rem; letter-spacing: 1px;">CLASSES ATTENDED</p>
+                    <h2 class="fw-bold mb-0 text-dark">{{ present_count }} <span class="text-muted fs-6">/ {{ total_attendance }}</span></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-box p-4 h-100 d-flex align-items-center">
+                <div class="metric-icon icon-orange me-3">
+                    <i class="fas fa-book"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-0" style="font-size: 0.75rem; letter-spacing: 1px;">ENROLLED MODULES</p>
+                    <h2 class="fw-bold mb-0 text-dark">{{ attendance_list|length }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Layout Matrix -->
+    <div class="row g-4 mb-4">
+
+        <!-- Left Column: Identity & Analytics -->
+        <div class="col-lg-5 d-flex flex-column gap-4">
+
+            <!-- Holographic Identity -->
+            <div class="glass-box p-4 position-relative overflow-hidden flex-fill"
+                style="border-left: 4px solid #06b6d4;">
+                <i class="fas fa-fingerprint position-absolute"
+                    style="font-size: 150px; right: -20px; top: 10px; color: rgba(0,0,0,0.03); z-index: 0;"></i>
+                <h5 class="fw-bold mb-4 position-relative z-1" style="color: #475569;">Student Identity</h5>
+
+                <div class="d-flex align-items-center position-relative z-1 mb-4">
+                    <img src="{% if student.user.profile_pic %}{{ student.user.profile_pic.url }}{% else %}https://ui-avatars.com/api/?name={{ student.user.get_full_name|urlencode }}&background=06b6d4&color=fff{% endif %}"
+                        alt="Avatar" class="rounded-circle me-3"
+                        style="width: 70px; height: 70px; border: 2px solid #06b6d4;">
+                    <div>
+                        <h4 class="mb-1 fw-bold text-dark">{{ student.user.get_full_name }}</h4>
+                        <div class="badge bg-light border border-secondary text-primary mb-1"
+                            style="font-family: monospace;">ID: STU{{ student.id|stringformat:"04d" }}</div>
+                    </div>
+                </div>
+
+                <div class="position-relative z-1 mt-auto">
+                    <a href="/id/STU{{ student.id }}/" target="_blank"
+                        class="btn btn-info w-100 rounded-pill py-2 fw-bold"
+                        style="background: linear-gradient(135deg, #06b6d4, #0284c7); border: none; color: white;">
+                        <i class="fas fa-qrcode me-2"></i>Access Digital ID
+                    </a>
+                </div>
+            </div>
+
+            <!-- Radar/Radar Chart (Re-using Chart Area) -->
+            <div class="glass-box p-4 flex-fill">
+                <h5 class="fw-bold mb-4" style="color: #475569;"><i class="fas fa-chart-area me-2"></i>Academic Radar</h5>
+                <div class="chart-container" style="height: 250px;">
+                    <canvas id="studentRadarChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Subject Mastery -->
+        <div class="col-lg-7">
+            <div class="glass-box p-4 h-100">
+                <h5 class="fw-bold mb-4" style="color: #475569;"><i class="fas fa-layer-group me-2"></i>Subject Attendance & Marks</h5>
+
+                <div class="mt-2">
+                    {% for row in attendance_list %}
+                    <div class="subject-row">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="text-dark fw-bold mb-0" style="font-size: 0.9rem;">{{ row.subject }}</h6>
+                            <span class="badge bg-light border text-secondary">Mark: {{ row.marks|default:"Pending" }}</span>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                            <span class="text-muted me-3" style="font-size: 0.75rem; width: 35px;">{{ row.attendance }}%</span>
+                            <div class="progress flex-grow-1"
+                                style="height: 6px; background-color: #e2e8f0; border-radius: 4px;">
+                                {% if row.attendance >= 75 %}
+                                <div class="progress-bar bg-success mastery-progress"
+                                    data-mastery="{{ row.attendance|default:0 }}"></div>
+                                {% elif row.attendance >= 50 %}
+                                <div class="progress-bar bg-warning mastery-progress"
+                                    data-mastery="{{ row.attendance|default:0 }}"></div>
+                                {% else %}
+                                <div class="progress-bar bg-danger mastery-progress"
+                                    data-mastery="{{ row.attendance|default:0 }}"></div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    {% if not attendance_list %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-folder-open text-muted mb-3" style="font-size: 3rem; opacity: 0.3;"></i>
+                        <p class="text-muted">No course modules registered for current session.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock main_content %}
+
+{% block extra_js %}
+<!-- Safely pass the python list of dicts to JavaScript -->
+{{ attendance_list|json_script:"attData" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        Chart.defaults.color = '#64748b';
+        Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+
+        // Parse Django contextual data
+        const rawAttData = JSON.parse(document.getElementById('attData').textContent);
+
+        let labels = [];
+        let marks = [];
+
+        rawAttData.forEach(item => {
+            labels.push(item.subject);
+            // If marks is null/"Pending", convert to 0 for chart
+            marks.push(item.marks ? parseFloat(item.marks) : 0);
+        });
+
+        // Radar Chart to show balanced skill set
+        const radarCtx = document.getElementById('studentRadarChart').getContext('2d');
+        new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Subject Mastery Score',
+                    data: marks,
+                    backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                    borderColor: '#06b6d4',
+                    pointBackgroundColor: '#06b6d4',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#06b6d4',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(0, 0, 0, 0.08)' },
+                        grid: { color: 'rgba(0, 0, 0, 0.08)' },
+                        pointLabels: { color: '#475569', font: { size: 10 } },
+                        ticks: { display: false, min: 0, max: 100 }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Apply mastery progress widths (resolves CSS linter issues with template tags in style attributes)
+        document.querySelectorAll('.mastery-progress').forEach(el => {
+            el.style.width = el.getAttribute('data-mastery') + '%';
+            el.style.borderRadius = '4px';
+        });
+    });
+</script>
+{% endblock extra_js %}

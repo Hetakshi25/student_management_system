@@ -1,0 +1,40 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Add Subject{% endblock title %}
+{% block page_title %}Add New Subject{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='manage_subject' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow-sm border-0 p-4">
+            <form role="form" action="{% url 'add_subject_save' %}" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Subject Name</label>
+                    <input type="text" name="subject" class="form-control" placeholder="Enter subject name" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Course</label>
+                    <select name="course" class="form-control">
+                        {% for course in courses %}
+                        <option value="{{ course.id }}">{{ course.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Teacher</label>
+                    <select name="teacher" class="form-control">
+                        {% for teacher in teachers %}
+                        <option value="{{ teacher.id }}">{{ teacher.get_full_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Add Subject</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock main_content %}

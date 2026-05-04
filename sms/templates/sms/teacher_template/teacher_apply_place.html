@@ -1,0 +1,98 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Place Application{% endblock title %}
+{% block page_title %}Application for Teacher's Place{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/teacher_template/sidebar_template.html' with active_page='place_app' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm border-0 p-4 mb-4">
+            <h5 class="fw-bold mb-4">New Place Application <small class="text-muted fw-normal fst-italic">(Apply to
+                    take/occupy a teacher's place)</small></h5>
+            <form action="{% url 'teacher_apply_place_save' %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Place/Position Name</label>
+                        <input type="text" name="place_name" class="form-control"
+                            placeholder="e.g. Lab Assistant, HOD Office, Room 202" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Application Date</label>
+                        <input type="date" name="application_date" class="form-control" value="{% now 'Y-m-d' %}"
+                            min="{% now 'Y-m-d' %}" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Select Valid Reason</label>
+                    <select class="form-select mb-2"
+                        onchange="document.getElementById('reasons_text').value=this.value">
+                        <option value="">-- Choose a Perfect Reason --</option>
+                        <option value="Replacement for medical leave of existing teacher.">Replacement for medical leave
+                        </option>
+                        <option value="Temporary assignment for specialized subject expertise.">Specialized Subject
+                            Expertise</option>
+                        <option value="Authorized substitution for institutional representation duty.">Institutional
+                            Representation Duty</option>
+                        <option value="Emergency classroom management in absence of primary faculty.">Emergency
+                            Classroom Management</option>
+                        <option value="Departmental rotation for cross-functional training.">Departmental Rotation
+                        </option>
+                    </select>
+                    <textarea name="reasons" id="reasons_text" class="form-control" rows="4"
+                        placeholder="Detailed reasons for taking the teacher's place..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Submit Place Application</button>
+            </form>
+        </div>
+
+        <div class="my-5">
+            <hr class="border-secondary opacity-25">
+        </div>
+
+        <div class="card shadow-sm border-0 p-4">
+            <h5 class="fw-bold mb-4">Application History</h5>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Place Name</th>
+                            <th>Date</th>
+                            <th>Reasons</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in applications %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td class="fw-bold">{{ app.place_name }}</td>
+                            <td>{{ app.application_date }}</td>
+                            <td><small>{{ app.reasons }}</small></td>
+                            <td>
+                                {% if app.status == 0 %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                                {% elif app.status == 1 %}
+                                <span class="badge bg-success">Approved</span>
+                                {% else %}
+                                <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">No applications found in the history.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main_content %}

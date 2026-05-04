@@ -1,0 +1,80 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Apply Leave{% endblock title %}
+{% block page_title %}Apply for Leave{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/teacher_template/sidebar_template.html' with active_page='leave' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm border-0 p-4 mb-4">
+            <h5 class="fw-bold mb-4">Leave Application</h5>
+            <form action="{% url 'teacher_apply_leave_save' %}" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Leave Date</label>
+                    <input type="date" name="leave_date" class="form-control" value="{% now 'Y-m-d' %}" min="{% now 'Y-m-d' %}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Reason</label>
+                    <textarea name="leave_message" class="form-control" rows="4" placeholder="Reason for leave"
+                        required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Apply Leave</button>
+            </form>
+        </div>
+
+        <div class="card shadow-sm border-0 p-4">
+            <h5 class="fw-bold mb-4">Leave History</h5>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in leave_data %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ row.leave_date }}</td>
+                            <td>{{ row.leave_message }}</td>
+                            <td>
+                                {% if row.leave_status == 0 %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                                {% elif row.leave_status == 1 %}
+                                <span class="badge bg-success">Approved</span>
+                                {% else %}
+                                <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if row.leave_status == 0 %}
+                                <a href="{% url 'teacher_edit_leave' row.id %}"
+                                    class="btn btn-sm btn-info text-white"><i class="fas fa-edit"></i></a>
+                                <a href="{% url 'teacher_delete_leave' row.id %}" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Delete this application?')"><i
+                                        class="fas fa-trash"></i></a>
+                                {% else %}
+                                <span class="text-muted small">No actions</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No leave applications yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main_content %}

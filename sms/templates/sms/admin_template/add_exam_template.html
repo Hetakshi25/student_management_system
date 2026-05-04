@@ -1,0 +1,88 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Add Exam Schedule{% endblock title %}
+{% block page_title %}Add Exam Schedule{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='manage_exam' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="card shadow-sm border-0 p-4 mx-auto" style="max-width: 600px;">
+    <h5 class="fw-bold mb-4">Add Exam Schedule Details</h5>
+    <form role="form" action="{% url 'add_exam_save' %}" method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Course</label>
+            <select class="form-select" id="course_filter">
+                <option value="">Select Course</option>
+                {% for course in courses %}
+                <option value="{{ course.id }}">{{ course.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Subject</label>
+            <select class="form-select" name="subject" id="subject_select" required disabled>
+                <option value="" disabled selected>Select Course First</option>
+                {% for subject in subjects %}
+                <option value="{{ subject.id }}" data-course="{{ subject.course.id }}" style="display: none;">
+                    {{ subject.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <script>
+            document.getElementById('course_filter').addEventListener('change', function () {
+                const courseId = this.value;
+                const subjectSelect = document.getElementById('subject_select');
+                const options = subjectSelect.querySelectorAll('option[data-course]');
+
+                if (courseId) {
+                    subjectSelect.disabled = false;
+                    subjectSelect.value = "";
+                    subjectSelect.querySelector('option[selected]').textContent = "Select Subject";
+
+                    options.forEach(opt => {
+                        if (opt.getAttribute('data-course') === courseId) {
+                            opt.style.display = 'block';
+                        } else {
+                            opt.style.display = 'none';
+                        }
+                    });
+                } else {
+                    subjectSelect.disabled = true;
+                    subjectSelect.value = "";
+                    subjectSelect.querySelector('option[selected]').textContent = "Select Course First";
+                }
+            });
+        </script>
+
+        <div class="mb-3">
+            <label class="form-label">Exam Date</label>
+            <input type="date" class="form-control" name="exam_date" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Start Time</label>
+            <input type="time" class="form-control" name="start_time" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">End Time</label>
+            <input type="time" class="form-control" name="end_time" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Room Number</label>
+            <input type="text" class="form-control" name="room_number" placeholder="Enter Room Number" required>
+        </div>
+
+        <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-warning fw-bold py-2">Add Exam Schedule</button>
+        </div>
+    </form>
+</div>
+{% endblock main_content %}

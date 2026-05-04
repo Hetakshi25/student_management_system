@@ -1,0 +1,66 @@
+{% extends 'sms/base.html' %}
+{% block title %}Manage Teachers{% endblock title %}
+{% block page_title %}Manage Teachers{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='manage_teacher' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="card shadow-sm border-0 p-4">
+    <div class="row g-3 mb-4 align-items-center">
+        <div class="col-md-3">
+            <h5 class="fw-bold mb-0">Teacher Directory</h5>
+        </div>
+        <div class="col-md-9 d-flex flex-wrap gap-2 justify-content-end">
+            <form method="GET" class="d-flex gap-2">
+                <div class="input-group w-auto">
+                    <input type="text" name="q" class="form-control" placeholder="Search teachers..."
+                        value="{{ query|default:'' }}">
+                    <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+            <a href="{% url 'export_teachers_csv' %}" class="btn btn-outline-success"><i
+                    class="fas fa-file-csv me-2"></i> Export</a>
+            <a href="{% url 'add_teacher' %}" class="btn btn-primary"><i class="fas fa-plus me-2"></i> Add Teacher</a>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teacher in teachers %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ teacher.user.get_full_name }}</td>
+                    <td>{{ teacher.user.username }}</td>
+                    <td>{{ teacher.user.email }}</td>
+                    <td>{{ teacher.user.phone|default:"-" }}</td>
+                    <td>{{ teacher.address }}</td>
+                    <td>
+                        <a href="{% url 'edit_teacher' teacher.id %}" class="btn btn-sm btn-info text-white"><i
+                                class="fas fa-edit"></i></a>
+                        <a href="{% url 'delete_teacher' teacher.id %}" class="btn btn-sm btn-danger"
+                            onclick="return confirm('Are you sure?')"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No teachers found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock main_content %}

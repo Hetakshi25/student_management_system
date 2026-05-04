@@ -1,0 +1,80 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}View Students{% endblock title %}
+{% block page_title %}Students Registry{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/teacher_template/sidebar_template.html' with active_page='students' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="card shadow-sm border-0 p-4">
+    <div class="row g-3 mb-4 align-items-center">
+        <div class="col-md-3">
+            <h5 class="fw-bold mb-0">Assigned Students</h5>
+        </div>
+        <div class="col-md-9 d-flex flex-wrap gap-2 justify-content-end">
+            <form method="GET" class="d-flex gap-2" id="filterForm">
+                <select name="course" class="form-select w-auto" onchange="this.form.submit()">
+                    <option value="">All Courses</option>
+                    {% for course in courses %}
+                    <option value="{{ course.id }}" {% if course_filter == course.id|stringformat:"s" %}selected{% endif %}>{{ course.name }}</option>
+                    {% endfor %}
+                </select>
+                <div class="input-group w-auto">
+                    <input type="text" name="q" class="form-control" placeholder="Search students..."
+                        value="{{ query|default:'' }}">
+                    <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="bg-light">
+                <tr>
+                    <th class="px-3">#</th>
+                    <th>Student Name</th>
+                    <th>Email</th>
+                    <th>Course</th>
+                    <th>Attendance %</th>
+                    <th>Address</th>
+                </tr>
+
+            </thead>
+            <tbody>
+                {% for data in students_data %}
+                <tr>
+                    <td class="px-3 text-secondary">{{ forloop.counter }}</td>
+                    <td>
+                        <div class="fw-bold text-dark">{{ data.student.user.get_full_name }}</div>
+                    </td>
+                    <td>{{ data.student.user.email }}</td>
+                    <td><span class="badge bg-soft-info text-info">{{ data.student.course.name }}</span></td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <span class="me-2">{{ data.att_rate }}%</span>
+                            <div class="progress w-100" style="height: 5px;">
+                                <div class="progress-bar {% if data.att_rate > 75 %}bg-success{% elif data.att_rate > 50 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                     role="progressbar" style="width: {{ data.att_rate }}%"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="text-muted small text-truncate" style="max-width: 150px;">{{ data.student.address }}</td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">No students assigned to your courses.</td>
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+.bg-soft-info { background-color: rgba(13, 202, 240, 0.1); }
+.text-info { color: #0dcaf0 !important; }
+</style>
+{% endblock main_content %}

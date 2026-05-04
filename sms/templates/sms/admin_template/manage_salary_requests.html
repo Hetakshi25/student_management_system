@@ -1,0 +1,70 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Manage Salary Requests{% endblock title %}
+{% block page_title %}Salary Request Management{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='manage_salary_requests' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="card shadow-sm border-0 p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0">Pending Requests</h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">ID</th>
+                    <th>Teacher Name</th>
+                    <th>Requested Amount</th>
+                    <th>Status</th>
+                    <th>Request Date</th>
+                    <th>Message</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for request in requests %}
+                <tr>
+                    <td class="ps-4">{{ forloop.counter }}</td>
+                    <td class="fw-bold">{{ request.teacher.user.get_full_name }}</td>
+                    <td>₹{{ request.requested_amount }}</td>
+                    <td>
+                        {% if request.request_status == 0 %}
+                        <span class="badge bg-secondary">Pending</span>
+                        {% elif request.request_status == 1 %}
+                        <span class="badge bg-success">Approved</span>
+                        {% else %}
+                        <span class="badge bg-danger">Rejected</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted small">{{ request.created_at|date:"d M Y" }}</td>
+                    <td class="text-muted small">{{ request.request_message|default:"-" }}</td>
+                    <td>
+                        {% if request.request_status == 0 %}
+                        <a href="{% url 'approve_salary_request' request.id %}"
+                            class="btn btn-sm btn-success text-white me-1"
+                            onclick="return confirm('Approve and pay this salary?')">
+                            <i class="fas fa-check"></i> Approve
+                        </a>
+                        <a href="{% url 'reject_salary_request' request.id %}" class="btn btn-sm btn-danger"
+                            onclick="return confirm('Reject this request?')">
+                            <i class="fas fa-times"></i> Reject
+                        </a>
+                        {% else %}
+                        <span class="text-muted small">Processed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">No salary requests found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock main_content %}
+

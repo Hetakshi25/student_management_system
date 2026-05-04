@@ -1,0 +1,143 @@
+{% extends 'sms/base.html' %}
+{% load static %}
+{% block title %}Fee Receipt Tracking | SMS Secure Digital Portal{% endblock %}
+
+{% block main_content %}
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<div class="container-fluid py-5" style="font-family: 'Outfit', sans-serif;">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Receipt Design -->
+            <div id="printArea" class="card border-0 shadow-lg rounded-4 overflow-hidden bg-white">
+                <!-- Header with Institutional Branding -->
+                <div class="p-5 text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+                    <div class="position-absolute top-0 end-0 p-4 opacity-25">
+                        <i class="fas fa-university fa-6x"></i>
+                    </div>
+                    <div class="row align-items-center position-relative">
+                        <div class="col-md-8">
+                            <h2 class="fw-bold mb-1">OFFICIAL FEE RECEIPT</h2>
+                            <p class="mb-0 text-white-50">Student Management System (SMS) Institutional Portal</p>
+                            <p class="small text-white-50 mt-1">ISO 9001:2015 Certified Institution</p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div class="bg-primary text-white d-inline-block px-4 py-2 rounded-3 fw-bold">
+                                {{ fee.status | upper }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-5">
+                    <!-- Receipt Meta Info -->
+                    <div class="row mb-5">
+                        <div class="col-sm-6">
+                            <h6 class="text-uppercase text-muted small fw-bold mb-3">Issued To:</h6>
+                            <h5 class="fw-bold text-dark mb-1">{{ student.user.get_full_name }}</h5>
+                            <p class="text-muted small mb-0">Student ID: #{{ student.id | stringformat:"06d" }}</p>
+                            <p class="text-muted small mb-0">Course: {{ student.course.name }}</p>
+                        </div>
+                        <div class="col-sm-6 text-sm-end">
+                            <h6 class="text-uppercase text-muted small fw-bold mb-3">Receipt Details:</h6>
+                            <p class="text-dark fw-bold mb-1">Receipt Number: {{ receipt_id }}</p>
+                            <p class="text-muted small mb-0">Payment Date: {{ fee.payment_date }}</p>
+                            <p class="text-muted small mb-0">Transaction Ref: {{ fee.transaction_id }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Payment Table -->
+                    <div class="table-responsive mb-5">
+                        <table class="table table-bordered border-light align-middle text-center">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="py-3 fw-bold text-muted small">PARTICULARS</th>
+                                    <th class="py-3 fw-bold text-muted small">MODE</th>
+                                    <th class="py-3 fw-bold text-muted small">QUANTITY</th>
+                                    <th class="py-3 fw-bold text-muted small">TOTAL AMOUNT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="height: 100px;">
+                                    <td>
+                                        <div class="fw-bold text-dark">{{ fee.description }}</div>
+                                        <small class="text-muted">Institutional Academic Fees</small>
+                                    </td>
+                                    <td>ONLINE (UPI)</td>
+                                    <td>01</td>
+                                    <td class="h5 fw-bold text-primary">₹{{ fee.fee_amount }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Detailed Breakdown -->
+                    <div class="row justify-content-end mb-5">
+                        <div class="col-lg-5">
+                            <div class="p-4 rounded-4 bg-light border">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted fw-bold small">SUBTOTAL</span>
+                                    <span class="fw-bold text-dark">₹{{ fee.fee_amount }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted fw-bold small">TAX (0%)</span>
+                                    <span class="fw-bold text-dark">₹0.00</span>
+                                </div>
+                                <hr class="my-3 border-secondary border-opacity-25">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0 fw-bold text-dark">NET PAID</h5>
+                                    <h3 class="mb-0 fw-bold text-primary">₹{{ fee.fee_amount }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Branding and QR Verification -->
+                    <div class="row align-items-center pt-5 border-top border-light">
+                        <div class="col-md-8">
+                            <h6 class="fw-bold text-dark mb-2">Verification Notice</h6>
+                            <p class="small text-muted mb-0">This is a digitally generated receipt and does not require a physical signature. You can verify the authenticity of this receipt by scanning the QR code or visiting the registrar portal.</p>
+                            <p class="small text-muted mt-3">Generation Date: {{ current_time }}</p>
+                        </div>
+                        <div class="col-md-4 text-md-end pt-4 pt-md-0">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=VERIFY-{{ receipt_id }}" 
+                                 alt="Verify Receipt" class="img-fluid rounded border p-1 bg-white opacity-75 shadow-sm" style="width: 80px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-4 text-center">
+                <button class="btn btn-primary px-5 py-3 rounded-pill shadow-lg fw-bold me-2" onclick="printReceipt()">
+                    <i class="fas fa-print me-2"></i> Print Receipt
+                </button>
+                <a href="{% url 'student_pay_fee' %}" class="btn btn-outline-secondary px-5 py-3 rounded-pill fw-bold">
+                    <i class="fas fa-arrow-left me-2"></i> Back to History
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function printReceipt() {
+        const printContents = document.getElementById('printArea').innerHTML;
+        const originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+</script>
+
+<style>
+    .rounded-4 { border-radius: 1.5rem !important; }
+    @media print {
+        body * { visibility: hidden; }
+        #printArea, #printArea * { visibility: visible; }
+        #printArea { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none !important; border-radius: 0 !important; }
+        .btn, .sidebar, .navbar { display: none !important; }
+    }
+</style>
+{% endblock %}

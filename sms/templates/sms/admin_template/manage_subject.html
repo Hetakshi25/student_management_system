@@ -1,0 +1,128 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Manage Subjects{% endblock title %}
+{% block page_title %}Manage Subjects{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='manage_subject' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="card shadow-sm border-0 p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0">Subject List</h5>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSubjectModal"><i
+                class="fas fa-plus me-2"></i> Add Subject</button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Subject Name</th>
+                    <th>Course</th>
+                    <th>Teacher</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subject in subjects %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ subject.name }}</td>
+                    <td>{{ subject.course.name }}</td>
+                    <td>{{ subject.teacher.get_full_name }}</td>
+                    <td>
+                        <a href="{% url 'edit_subject' subject.id %}" class="btn btn-sm btn-info text-white"><i
+                                class="fas fa-edit"></i></a>
+                        <a href="{% url 'delete_subject' subject.id %}" class="btn btn-sm btn-danger"
+                            onclick="return confirm('Are you sure?')"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No subjects found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Subject Modal -->
+<div class="modal fade" id="addSubjectModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content card shadow-sm border-0 border-0">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Add New Subject</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addSubjectForm">
+                    <div class="mb-3">
+                        <label class="form-label">Subject Name</label>
+                        <input type="text" id="subject_name" class="form-control" placeholder="Enter subject name"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Course</label>
+                        <select id="course_id" class="form-control" required>
+                            <option value="">Select Course</option>
+                            {% for course in courses %}
+                            <option value="{{ course.id }}">{{ course.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Teacher</label>
+                        <select id="teacher_id" class="form-control" required>
+                            <option value="">Select Teacher</option>
+                            {% for teacher in teachers %}
+                            <option value="{{ teacher.id }}">{{ teacher.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Save Subject</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.getElementById('addSubjectForm').onsubmit = function (e) {
+        e.preventDefault();
+        const subjectName = document.getElementById('subject_name').value;
+        const courseId = document.getElementById('course_id').value;
+        const teacherId = document.getElementById('teacher_id').value;
+        const btn = this.querySelector('button[type="submit"]');
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Saving...';
+
+        fetch("{% url 'admin_add_subject_ajax' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: new URLSearchParams({
+                'subject': subjectName,
+                'course': courseId,
+                'teacher': teacherId
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    location.reload();
+                } else {
+                    alert("Error: " + data.message);
+                    btn.disabled = false;
+                    btn.innerText = 'Save Subject';
+                }
+            });
+    };
+</script>
+{% endblock extra_js %}
+{% endblock main_content %}

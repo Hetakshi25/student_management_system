@@ -1,0 +1,60 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Edit Student Fee{% endblock title %}
+{% block page_title %}Edit Fee Record{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='manage_fees' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold mb-0">Update Fee Record</h5>
+                <a href="{% url 'manage_fees' %}" class="btn btn-outline-secondary btn-sm"><i
+                        class="fas fa-arrow-left me-2"></i>Back to Records</a>
+            </div>
+
+            <form role="form" action="{% url 'edit_fee_save' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="fee_id" value="{{ fee.id }}">
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold text-uppercase">Student</label>
+                    {{ form.student }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold text-uppercase">Fee Amount</label>
+                    {{ form.fee_amount }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold text-uppercase">Status</label>
+                    {{ form.status }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold text-uppercase">Description</label>
+                    {{ form.description }}
+                </div>
+
+                <div class="form-group mt-4">
+                    {% if messages %}
+                    {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                    {% endif %}
+                    {% if message.tags == 'success' %}
+                    <div class="alert alert-success">{{ message }}</div>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Update Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock main_content %}

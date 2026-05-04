@@ -1,0 +1,128 @@
+from django.urls import path
+from sms.views import admin_views
+
+urlpatterns = [
+    path('admin_home/', admin_views.admin_home, name="admin_home"),
+    path('manage_student/', admin_views.manage_student, name="manage_student"),
+    path('add_student/', admin_views.add_student, name="add_student"),
+    path('add_student_save/', admin_views.add_student_save, name="add_student_save"),
+    path('edit_student/<student_id>/', admin_views.edit_student, name="edit_student"),
+    path('edit_student_save/', admin_views.edit_student_save, name="edit_student_save"),
+    path('delete_student/<student_id>/', admin_views.delete_student, name="delete_student"),
+    
+    path('manage_teacher/', admin_views.manage_teacher, name="manage_teacher"),
+    path('add_teacher/', admin_views.add_teacher, name="add_teacher"),
+    path('add_teacher_save/', admin_views.add_teacher_save, name="add_teacher_save"),
+    path('edit_teacher/<teacher_id>/', admin_views.edit_teacher, name="edit_teacher"),
+    path('edit_teacher_save/', admin_views.edit_teacher_save, name="edit_teacher_save"),
+    path('delete_teacher/<teacher_id>/', admin_views.delete_teacher, name="delete_teacher"),
+    
+    path('manage_course/', admin_views.manage_course, name="manage_course"),
+    path('add_course/', admin_views.add_course, name="add_course"),
+    path('add_course_save/', admin_views.add_course_save, name="add_course_save"),
+    path('edit_course/<course_id>/', admin_views.edit_course, name="edit_course"),
+    path('edit_course_save/', admin_views.edit_course_save, name="edit_course_save"),
+    path('delete_course/<course_id>/', admin_views.delete_course, name="delete_course"),
+    path('admin_add_course_ajax/', admin_views.admin_add_course_ajax, name="admin_add_course_ajax"),
+    
+    path('manage_subject/', admin_views.manage_subject, name="manage_subject"),
+    path('add_subject/', admin_views.add_subject, name="add_subject"),
+    path('add_subject_save/', admin_views.add_subject_save, name="add_subject_save"),
+    path('edit_subject/<subject_id>/', admin_views.edit_subject, name="edit_subject"),
+    path('edit_subject_save/', admin_views.edit_subject_save, name="edit_subject_save"),
+    path('delete_subject/<subject_id>/', admin_views.delete_subject, name="delete_subject"),
+    path('admin_add_subject_ajax/', admin_views.admin_add_subject_ajax, name="admin_add_subject_ajax"),
+    
+    path('send_teacher_notification/', admin_views.send_teacher_notification, name="send_teacher_notification"),
+    path('send_teacher_notification_save/', admin_views.send_teacher_notification_save, name="send_teacher_notification_save"),
+    path('delete_teacher_notification/<notification_id>/', admin_views.delete_teacher_notification, name="delete_teacher_notification"),
+
+    path('send_student_notification/', admin_views.send_student_notification, name="send_student_notification"),
+    path('send_student_notification_save/', admin_views.send_student_notification_save, name="send_student_notification_save"),
+    path('delete_student_notification/<notification_id>/', admin_views.delete_student_notification, name="delete_student_notification"),
+    
+    path('admin_student_leave_view/', admin_views.admin_student_leave_view, name="admin_student_leave_view"),
+    path('student_approve_leave/<leave_id>/', admin_views.student_approve_leave, name="student_approve_leave"),
+    path('student_disapprove_leave/<leave_id>/', admin_views.student_disapprove_leave, name="student_disapprove_leave"),
+    path('edit_student_leave/<leave_id>/', admin_views.edit_student_leave, name="edit_student_leave"),
+    path('edit_student_leave_save/', admin_views.edit_student_leave_save, name="edit_student_leave_save"),
+    path('delete_student_leave/<leave_id>/', admin_views.delete_student_leave, name="delete_student_leave"),
+    
+    path('admin_teacher_leave_view/', admin_views.admin_teacher_leave_view, name="admin_teacher_leave_view"),
+    path('teacher_approve_leave/<leave_id>/', admin_views.teacher_approve_leave, name="teacher_approve_leave"),
+    path('teacher_disapprove_leave/<leave_id>/', admin_views.teacher_disapprove_leave, name="teacher_disapprove_leave"),
+    path('edit_teacher_leave/<leave_id>/', admin_views.edit_teacher_leave, name="edit_teacher_leave"),
+    path('edit_teacher_leave_save/', admin_views.edit_teacher_leave_save, name="edit_teacher_leave_save"),
+    path('delete_teacher_leave/<leave_id>/', admin_views.delete_teacher_leave, name="delete_teacher_leave"),
+    
+    path('admin_student_feedback_view/', admin_views.admin_student_feedback_view, name="admin_student_feedback_view"),
+    path('admin_student_feedback_reply/', admin_views.admin_student_feedback_reply, name="admin_student_feedback_reply"),
+    path('delete_student_feedback/<feedback_id>/', admin_views.delete_student_feedback, name="delete_student_feedback"),
+    path('admin_teacher_feedback_view/', admin_views.admin_teacher_feedback_view, name="admin_teacher_feedback_view"),
+    path('admin_teacher_feedback_reply/', admin_views.admin_teacher_feedback_reply, name="admin_teacher_feedback_reply"),
+    path('delete_teacher_feedback/<feedback_id>/', admin_views.delete_teacher_feedback, name="delete_teacher_feedback"),
+    
+    path('admin_profile/', admin_views.admin_profile, name="admin_profile"),
+    path('admin_profile_save/', admin_views.admin_profile_save, name="admin_profile_save"),
+    
+    path('admin_attendance_report/', admin_views.admin_attendance_report, name="admin_attendance_report"),
+    path('admin_manage_attendance/', admin_views.admin_manage_attendance, name="admin_manage_attendance"),
+    path('admin_delete_attendance/<attendance_id>/', admin_views.admin_delete_attendance, name="admin_delete_attendance"),
+    path('admin_add_attendance_ajax/', admin_views.admin_add_attendance_ajax, name="admin_add_attendance_ajax"),
+    path('admin_view_attendance_data/<attendance_id>/', admin_views.admin_view_attendance_data, name="admin_view_attendance_data"),
+    path('admin_lesson_tracker/', admin_views.admin_lesson_tracker, name="admin_lesson_tracker"),
+    path('save_lesson_target/', admin_views.save_lesson_target, name="save_lesson_target"),
+    
+    path('admin_result_report/', admin_views.admin_result_report, name="admin_result_report"),
+    path('admin_manage_result/', admin_views.admin_manage_result, name="admin_manage_result"),
+    path('admin_edit_result/<result_id>/', admin_views.admin_edit_result, name="admin_edit_result"),
+    path('admin_add_result_ajax/', admin_views.admin_add_result_ajax, name="admin_add_result_ajax"),
+    path('admin_edit_result_save/', admin_views.admin_edit_result_save, name="admin_edit_result_save"),
+    path('admin_delete_result/<result_id>/', admin_views.delete_result_admin, name="delete_result_admin"),
+    
+    path('export_students_csv/', admin_views.export_students_csv, name="export_students_csv"),
+    path('export_teachers_csv/', admin_views.export_teachers_csv, name="export_teachers_csv"),
+    path('admin_attendance_summary/', admin_views.admin_attendance_summary, name="admin_attendance_summary"),
+    path('admin_teacher_progression/', admin_views.admin_teacher_progression, name="admin_teacher_progression"),
+    path('admin_teacher_work_progression/', admin_views.admin_teacher_progression, name="admin_teacher_work_progression"),
+    path('admin_teacher_progression_report/', admin_views.admin_teacher_progression, name="admin_teacher_progression_report"),
+
+    path('manage_department/', admin_views.manage_department, name="manage_department"),
+    path('add_department/', admin_views.add_department, name="add_department"),
+    path('add_department_save/', admin_views.add_department_save, name="add_department_save"),
+    path('edit_department/<department_id>/', admin_views.edit_department, name="edit_department"),
+    path('edit_department_save/', admin_views.edit_department_save, name="edit_department_save"),
+    path('delete_department/<department_id>/', admin_views.delete_department, name="delete_department"),
+
+    path('manage_exam/', admin_views.manage_exam, name="manage_exam"),
+    path('add_exam/', admin_views.add_exam, name="add_exam"),
+    path('add_exam_save/', admin_views.add_exam_save, name="add_exam_save"),
+    path('edit_exam/<exam_id>/', admin_views.edit_exam, name="edit_exam"),
+    path('edit_exam_save/', admin_views.edit_exam_save, name="edit_exam_save"),
+    path('delete_exam/<exam_id>/', admin_views.delete_exam, name="delete_exam"),
+
+    path('manage_fees/', admin_views.manage_fees, name="manage_fees"),
+    path('add_fee_ajax/', admin_views.add_fee_ajax, name="add_fee_ajax"),
+    path('get_student_fee_ajax/', admin_views.get_student_fee_ajax, name="get_student_fee_ajax"),
+    path('edit_fee/<fee_id>/', admin_views.edit_fee, name="edit_fee"),
+    path('edit_fee_save/', admin_views.edit_fee_save, name="edit_fee_save"),
+    path('delete_fee/<fee_id>/', admin_views.delete_fee, name="delete_fee"),
+
+    path('manage_salary/', admin_views.manage_salary, name="manage_salary"),
+    path('add_salary_ajax/', admin_views.add_salary_ajax, name="add_salary_ajax"),
+    path('edit_salary/<salary_id>/', admin_views.edit_salary, name="edit_salary"),
+    path('edit_salary_save/', admin_views.edit_salary_save, name="edit_salary_save"),
+    path('delete_salary/<salary_id>/', admin_views.delete_salary, name="delete_salary"),
+
+    path('manage_salary_requests/', admin_views.manage_salary_requests, name="manage_salary_requests"),
+    path('approve_salary_request/<request_id>/', admin_views.approve_salary_request, name="approve_salary_request"),
+    path('reject_salary_request/<request_id>/', admin_views.reject_salary_request, name="reject_salary_request"),
+
+    path('admin_view_place_app/', admin_views.admin_view_place_app, name="admin_view_place_app"),
+    path('place_app_approve/<app_id>/', admin_views.place_app_approve, name="place_app_approve"),
+    path('place_app_reject/<app_id>/', admin_views.place_app_reject, name="place_app_reject"),
+    path('admin_view_notification/', admin_views.admin_view_notification, name="admin_view_notification"),
+    path('admin_payment_settings/', admin_views.admin_payment_settings, name="admin_payment_settings"),
+    path('admin_payment_settings_save/', admin_views.admin_payment_settings_save, name="admin_payment_settings_save"),
+]
+

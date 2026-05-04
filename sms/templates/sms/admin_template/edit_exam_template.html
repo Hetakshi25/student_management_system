@@ -1,0 +1,107 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Edit Exam Schedule{% endblock title %}
+{% block page_title %}Edit Exam Schedule{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='manage_exam' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="card shadow-sm border-0 p-4 mx-auto" style="max-width: 600px;">
+    <h5 class="fw-bold mb-4">Edit Exam Schedule Details</h5>
+    <form role="form" action="{% url 'edit_exam_save' %}" method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Course</label>
+            <select class="form-select" id="course_filter">
+                <option value="">Select Course</option>
+                {% for course in courses %}
+                <option value="{{ course.id }}" {% if course.id == exam.subject.course.id %} selected {% endif %}>
+                    {{ course.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <input type="hidden" name="exam_id" value="{{ exam.id }}">
+            <label class="form-label">Subject</label>
+            <select class="form-select" name="subject" id="subject_select" required>
+                {% for subject in subjects %}
+                <option value="{{ subject.id }}" data-course="{{ subject.course.id }}" {% if subject.id == exam.subject.id %} selected {% endif %}>
+                    {{ subject.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <script>
+            function filterSubjects() {
+                const courseId = document.getElementById('course_filter').value;
+                const subjectSelect = document.getElementById('subject_select');
+                const options = subjectSelect.querySelectorAll('option[data-course]');
+
+                if (courseId) {
+                    subjectSelect.disabled = false;
+                    options.forEach(opt => {
+                        if (opt.getAttribute('data-course') === courseId) {
+                            opt.style.display = 'block';
+                        } else {
+                            opt.style.display = 'none';
+                        }
+                    });
+                } else {
+                    subjectSelect.disabled = true;
+                    subjectSelect.value = "";
+                }
+            }
+
+            // Initialize visibility on page load
+            window.addEventListener('DOMContentLoaded', (event) => {
+                const courseId = document.getElementById('course_filter').value;
+                const subjectSelect = document.getElementById('subject_select');
+                const options = subjectSelect.querySelectorAll('option[data-course]');
+                
+                options.forEach(opt => {
+                    if (opt.getAttribute('data-course') === courseId) {
+                        opt.style.display = 'block';
+                    } else {
+                        opt.style.display = 'none';
+                    }
+                });
+            });
+
+            document.getElementById('course_filter').addEventListener('change', function() {
+                document.getElementById('subject_select').value = "";
+                filterSubjects();
+            });
+        </script>
+
+        <div class="mb-3">
+            <label class="form-label">Exam Date</label>
+            <input type="date" class="form-control" name="exam_date" value="{{ exam.exam_date|date:'Y-m-d' }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Start Time</label>
+            <input type="time" class="form-control" name="start_time" value="{{ exam.start_time|time:'H:i' }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">End Time</label>
+            <input type="time" class="form-control" name="end_time" value="{{ exam.end_time|time:'H:i' }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Room Number</label>
+            <input type="text" class="form-control" name="room_number" value="{{ exam.room_number }}"
+                placeholder="Enter Room Number" required>
+        </div>
+
+        <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-warning fw-bold py-2">Update Exam Schedule</button>
+        </div>
+    </form>
+</div>
+{% endblock main_content %}

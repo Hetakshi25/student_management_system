@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital ID Card - {{ name }}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        .id-card-wrapper {
+            width: 100%;
+            max-width: 380px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 30px 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            transform: rotate(45deg);
+            z-index: 0;
+        }
+
+        .header {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 25px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .card-type {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .profile-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 25px;
+        }
+
+        .avatar-container {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            padding: 4px;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            margin-bottom: 15px;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #2a5298;
+            background-color: #fff;
+        }
+
+        .name {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0 0 5px 0;
+            text-align: center;
+        }
+
+        .role {
+            font-size: 14px;
+            color: #4facfe;
+            font-weight: 600;
+            margin: 0;
+            text-align: center;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 25px;
+            background: rgba(0,0,0,0.15);
+            padding: 15px;
+            border-radius: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 3px;
+            letter-spacing: 1px;
+        }
+
+        .detail-value {
+            font-size: 13px;
+            font-weight: 500;
+            word-wrap: break-word;
+        }
+
+        .qr-section {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .qr-placeholder {
+            width: 120px;
+            height: 120px;
+            background: white;
+            padding: 8px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .qr-image {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            background: rgba(46, 213, 115, 0.2);
+            color: #2ed573;
+            border: 1px solid rgba(46, 213, 115, 0.3);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-badge.inactive {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            border: 1px solid rgba(255, 71, 87, 0.3);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #2ed573;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #2ed573;
+        }
+        
+        .status-badge.inactive .status-dot {
+            background: #ff4757;
+            box-shadow: 0 0 10px #ff4757;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="id-card-wrapper">
+        <div class="glass-card">
+            
+            <div class="header">
+                <div class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2h11A2.5 2.5 0 0 1 20 4.5v15a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 19.5Z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22h11"/><path d="M14 6h3"/><path d="M14 10h3"/><path d="M14 14h3"/><path d="M8 6h3"/><path d="M8 10h3"/><path d="M8 14h3"/></svg>
+                    Institution Name
+                </div>
+                <div class="card-type">{{ type }} Digital ID</div>
+            </div>
+
+            <div class="profile-section">
+                <div class="avatar-container">
+                    {% if avatar %}
+                        <img class="avatar" src="{{ avatar }}" alt="Profile Photo">
+                    {% else %}
+                        <img class="avatar" src="https://ui-avatars.com/api/?name={{ name|urlencode }}&background=random" alt="Profile Photo">
+                    {% endif %}
+                </div>
+                <h2 class="name">{{ name }}</h2>
+                <p class="role">{{ department }}</p>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-item">
+                    <span class="detail-label">ID Number</span>
+                    <span class="detail-value">{{ id_number }}</span>
+                </div>
+                <!-- <div class="detail-item">
+                    <span class="detail-label">Contact</span>
+                    <span class="detail-value">{{ contact }}</span>
+                </div> -->
+                <div class="detail-item">
+                    <span class="detail-label">Email</span>
+                    <span class="detail-value" style="font-size: 11px;">{{ email }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Valid Thru</span>
+                    <span class="detail-value">{{ valid_thru }}</span>
+                </div>
+            </div>
+
+            <div class="qr-section">
+                <div class="qr-placeholder" id="qr-container">
+                    <!-- QR inserted dynamically -->
+                </div>
+                {% if is_active %}
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    Active & Verified
+                </div>
+                {% else %}
+                <div class="status-badge inactive">
+                    <div class="status-dot"></div>
+                    Inactive
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Intelligent URL detection for cross-device scanning
+            var targetUrl = "";
+            var currentHost = window.location.hostname;
+            var currentProtocol = window.location.protocol;
+            var currentPort = window.location.port ? ":" + window.location.port : "";
+            var path = "{{ request.path|escapejs }}";
+
+            // If we are on localhost/127.0.0.1, we must use the Network IP so phones can see it
+            if (currentHost === "localhost" || currentHost === "127.0.0.1") {
+                var networkIp = "192.168.31.85"; // Your computer's current Wi-Fi IP
+                targetUrl = "http://" + networkIp + ":8000" + path;
+            } else {
+                // We are already on a network IP or a public tunnel URL
+                targetUrl = currentProtocol + "//" + currentHost + currentPort + path;
+            }
+
+            console.log("QR Target URL:", targetUrl);
+
+            var qrApiUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + encodeURIComponent(targetUrl);
+            
+            var qrImg = document.createElement("div");
+            qrImg.className = "qr-image";
+            qrImg.style.backgroundImage = "url('" + qrApiUrl + "')";
+            qrImg.style.width = "100%";
+            qrImg.style.height = "100%";
+            qrImg.style.backgroundSize = "cover";
+            document.getElementById("qr-container").innerHTML = ""; // Clear existing
+            document.getElementById("qr-container").appendChild(qrImg);
+        });
+    </script>
+
+</body>
+</html>

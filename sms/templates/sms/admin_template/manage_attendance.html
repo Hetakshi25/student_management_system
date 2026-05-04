@@ -1,0 +1,123 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Manage Attendance{% endblock title %}
+{% block page_title %}Manage Attendance Records{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='attendance_manage' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="card shadow-sm border-0 p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold mb-0">Attendance Sessions</h5>
+        <div class="d-flex gap-2">
+            <a href="{% url 'admin_attendance_report' %}" class="btn btn-outline-primary btn-sm">Summary Report</a>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAttendanceModal"><i
+                    class="fas fa-plus me-2"></i> Add Session</button>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Teacher</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in attendance %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ row.subject.name }}</td>
+                    <td>{{ row.attendance_date }}</td>
+                    <td>{{ row.subject.teacher.get_full_name }}</td>
+                    <td>
+                        <a href="{% url 'admin_view_attendance_data' row.id %}"
+                            class="btn btn-sm btn-info text-white me-1">
+                            <i class="fas fa-eye"></i> View Details
+                        </a>
+                        <a href="{% url 'admin_delete_attendance' row.id %}" class="btn btn-sm btn-danger text-white"
+                            onclick="return confirm('Delete this attendance session and all student records within it?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No attendance sessions found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Attendance Modal -->
+<div class="modal fade" id="addAttendanceModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content card shadow-sm border-0 border-0">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Create Attendance Session</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addAttendanceForm">
+                    <div class="mb-3">
+                        <label class="form-label">Subject</label>
+                        <select id="attn_subject" class="form-control" required>
+                            <option value="">Select Subject</option>
+                            {% for sub in subjects %}
+                            <option value="{{ sub.id }}">{{ sub.name }} ({{ sub.teacher.get_full_name }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date</label>
+                        <input type="date" id="attn_date" class="form-control" value="{% now 'Y-m-d' %}" min="{% now 'Y-m-d' %}" max="{% now 'Y-m-d' %}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Create Session</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.getElementById('addAttendanceForm').onsubmit = function (e) {
+        e.preventDefault();
+        const subjectId = document.getElementById('attn_subject').value;
+        const attnDate = document.getElementById('attn_date').value;
+        const btn = this.querySelector('button[type="submit"]');
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating...';
+
+        fetch("{% url 'admin_add_attendance_ajax' %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: new URLSearchParams({
+                'subject': subjectId,
+                'date': attnDate
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    location.reload();
+                } else {
+                    alert("Error: " + data.message);
+                    btn.disabled = false;
+                    btn.innerText = 'Create Session';
+                }
+            });
+    };
+</script>
+{% endblock extra_js %}
+{% endblock main_content %}

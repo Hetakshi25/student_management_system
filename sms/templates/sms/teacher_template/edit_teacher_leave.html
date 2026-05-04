@@ -1,0 +1,38 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Edit Leave{% endblock title %}
+{% block page_title %}Edit Your Leave Application{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/teacher_template/sidebar_template.html' with active_page='leave' %}
+{% endblock sidebar_nav %}
+{% block main_content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <div class="card shadow-sm border-0 p-4">
+            <form action="{% url 'teacher_edit_leave_save' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="leave_id" value="{{ leave.id }}">
+
+                <h5 class="fw-bold mb-4">Edit Leave Application</h5>
+
+                <div class="mb-3">
+                    <label class="form-label">Leave Date</label>
+                    <input type="date" name="leave_date" class="form-control" value="{{ leave.leave_date }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Reason for Leave</label>
+                    <textarea name="leave_message" class="form-control" rows="5"
+                        required>{{ leave.leave_message }}</textarea>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary w-100">Update Application</button>
+                    <a href="{% url 'teacher_apply_leave' %}"
+                        class="btn btn-link w-100 mt-2 text-decoration-none">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock main_content %}

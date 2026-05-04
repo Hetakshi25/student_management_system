@@ -1,0 +1,103 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Add Result{% endblock title %}
+{% block page_title %}Add Result{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/teacher_template/sidebar_template.html' with active_page='add_result' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="card shadow-sm border-0 p-4">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label">Subject</label>
+                <select name="subject" id="subject" class="form-control">
+                    {% for subject in subjects %}
+                    <option value="{{ subject.id }}">{{ subject.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="button" class="btn btn-primary" id="fetch_student">Fetch Students</button>
+        </div>
+    </div>
+
+    <div id="student_data" class="mt-4">
+        <!-- Student list will be loaded here -->
+    </div>
+</div>
+{% endblock main_content %}
+
+{% block extra_js %}
+<script>
+    document.getElementById('fetch_student').addEventListener('click', function () {
+        var subject = document.getElementById('subject').value;
+
+        fetch('{% url "get_students_result" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: 'subject=' + subject
+        })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('student_data').innerHTML = data;
+            });
+    });
+
+    // Delegated event for save button
+    document.addEventListener('click', function (e) {
+        if (e.target && e.target.id == 'save_result') {
+            var student_ids = [];
+            var assignment_marks = [];
+            var exam_marks = [];
+
+            // Collect Student IDs
+            document.querySelectorAll('input[name="student_ids[]"]').forEach(function (input) {
+                student_ids.push(input.value);
+            });
+
+            // Collect Assignment Marks
+            document.querySelectorAll('input[name="assignment_marks[]"]').forEach(function (input) {
+                assignment_marks.push(input.value);
+            });
+
+            // Collect Exam Marks
+            document.querySelectorAll('input[name="exam_marks[]"]').forEach(function (input) {
+                exam_marks.push(input.value);
+            });
+
+            var subject_id = document.getElementById('subject').value;
+
+            // Basic Validation
+            if (student_ids.length === 0) {
+                alert("No students to save.");
+                return;
+            }
+
+            fetch('{% url "save_student_result" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: 'student_ids=' + JSON.stringify(student_ids) +
+                    '&assignment_marks=' + JSON.stringify(assignment_marks) +
+                    '&exam_marks=' + JSON.stringify(exam_marks) +
+                    '&subject_id=' + subject_id
+            })
+                .then(response => response.text())
+                .then(data => {
+                    if (data == "OK") {
+                        alert("Result Saved Successfully");
+                        location.reload(); // Reload to clear/refresh
+                    } else {
+                        alert("Error in Saving Result");
+                    }
+                });
+        }
+    });
+</script>
+{% endblock extra_js %}

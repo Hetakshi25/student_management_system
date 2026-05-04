@@ -1,0 +1,59 @@
+﻿{% extends 'sms/base.html' %}
+{% block title %}Manage Place Applications{% endblock title %}
+{% block page_title %}Teacher Place Applications{% endblock page_title %}
+
+{% block sidebar_nav %}
+{% include 'sms/admin_template/sidebar_template.html' with active_page='place_app' %}
+{% endblock sidebar_nav %}
+
+{% block main_content %}
+<div class="card shadow-sm border-0 p-4">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Teacher</th>
+                    <th>Place Name</th>
+                    <th>Application Date</th>
+                    <th>Reasons</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                <tr>
+                    <td>{{ app.id }}</td>
+                    <td>{{ app.teacher.user.get_full_name }}</td>
+                    <td class="fw-bold">{{ app.place_name }}</td>
+                    <td>{{ app.application_date }}</td>
+                    <td><small>{{ app.reasons }}</small></td>
+                    <td>
+                        {% if app.status == 0 %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                        {% elif app.status == 1 %}
+                        <span class="badge bg-success">Approved</span>
+                        {% else %}
+                        <span class="badge bg-danger">Rejected</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if app.status == 0 %}
+                        <a href="{% url 'place_app_approve' app.id %}" class="btn btn-sm btn-success">Approve</a>
+                        <a href="{% url 'place_app_reject' app.id %}" class="btn btn-sm btn-danger">Reject</a>
+                        {% else %}
+                        <span class="text-muted small">Processed</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-4 text-muted">No applications to show.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock main_content %}
